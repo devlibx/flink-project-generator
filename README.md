@@ -12,7 +12,7 @@ mvn -DinteractiveMode=false archetype:generate -DarchetypeGroupId=io.github.devl
 This will include flink jar in the fat jar
 ```shell
 mvn clean install -P idea
-java -cp target/my-app-1.0-SNAPSHOT.jar:. com.myapp.Job
+java -cp target/my-app-1.0-SNAPSHOT.jar:.  com.myapp.Job
 ```
 
 ##### Production build

@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-package ${package};
+package io.github.devlibx.flink.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,7 +27,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Order {
+public class Order {
     @JsonProperty("rowNumber")
     private String rowNumber;
     @JsonProperty("orderKey")
