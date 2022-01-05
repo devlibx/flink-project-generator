@@ -18,7 +18,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/devlibx/flink-project-generator.git</connection>
-        <developerConnection>scm:git:https://github.com:devlibx/flink-project-generator.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/devlibx/flink-project-generator.git</developerConnection>
         <url>https://github.com/devlibx/java-project-generator/tree/master</url>
         <tag>2.0.3</tag>
     </scm>
