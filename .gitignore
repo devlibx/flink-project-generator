@@ -2,6 +2,8 @@
 *.class
 target
 .idea
+pom.xml.releaseBackup
+release.properties
 
 # Log file
 *.log
