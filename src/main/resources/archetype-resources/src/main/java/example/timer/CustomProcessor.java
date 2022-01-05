@@ -38,6 +38,7 @@ public class CustomProcessor extends KeyedProcessFunction<Long, Order, Alert> {
         mapState = getRuntimeContext().getMapState(mapStateDescriptor);
     }
 
+    static int i = 0;
     @Override
     public void processElement(Order value, Context context, Collector<Alert> out) throws Exception {
 
@@ -57,7 +58,9 @@ public class CustomProcessor extends KeyedProcessFunction<Long, Order, Alert> {
         try {
             // log.info("Timer called for customerId={}", ctx.getCurrentKey());
             Order order = mapState.get(ctx.getCurrentKey());
-            log.info("Timer called for customerId={} and got object from mapStore={}", ctx.getCurrentKey(), order);
+            if (i++ % 100 == 0) {
+                log.info("{} Timer called for customerId={} and got object from mapStore={}", i, ctx.getCurrentKey(), order);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

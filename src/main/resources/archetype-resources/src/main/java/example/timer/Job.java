@@ -5,6 +5,7 @@ package ${package}.example.timer;
 
 import ${package}.pojo.EventDeserializationSchema;
 import ${package}.pojo.Order;
+import ${package}.utils.ConfigReader;
 import ${package}.utils.Main;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.java.utils.ParameterTool;
@@ -29,9 +30,10 @@ public class Job implements Main.RunJob {
                 .setBootstrapServers(parameter.get("brokers", "localhost:9092"))
                 .setTopics(parameter.get("topic", "orders"))
                 .setGroupId(parameter.get("groupId", "1234"))
-                .setStartingOffsets(OffsetsInitializer.earliest())
+                .setStartingOffsets(ConfigReader.getOffsetsInitializer(parameter))
                 .setValueOnlyDeserializer(new EventDeserializationSchema())
                 .build();
+
         DataStream<Order> kafkaStream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "Kafka Source");
 
         // Transformer
