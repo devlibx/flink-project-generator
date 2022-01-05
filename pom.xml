@@ -20,7 +20,7 @@
         <connection>scm:git:https://github.com/devlibx/flink-project-generator.git</connection>
         <developerConnection>scm:git:https://github.com/devlibx/flink-project-generator.git</developerConnection>
         <url>https://github.com/devlibx/flink-project-generator/tree/master</url>
-      <tag>2.0.3</tag>
+        <tag>2.0.0</tag>
   </scm>
 
     <licenses>
