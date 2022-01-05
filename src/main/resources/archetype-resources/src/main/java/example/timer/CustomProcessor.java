@@ -55,7 +55,7 @@ public class CustomProcessor extends KeyedProcessFunction<Long, Order, Alert> {
         // This is the key which is used in partition -> in this code we used customer key as our context key
         // So we will get the customer key from context.
         try {
-            log.info("Timer called for customerId={}", ctx.getCurrentKey());
+            // log.info("Timer called for customerId={}", ctx.getCurrentKey());
             Order order = mapState.get(ctx.getCurrentKey());
             log.info("Timer called for customerId={} and got object from mapStore={}", ctx.getCurrentKey(), order);
         } catch (Exception e) {

@@ -102,6 +102,17 @@
                     <artifactId>flink-clients_${scala.binary.version}</artifactId>
                     <version>${flink.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>flink-statebackend-rocksdb_2.12</artifactId>
+                    <version>${flink.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>flink-s3-fs-hadoop</artifactId>
+                    <version>${flink.version}</version>
+                </dependency>
+
             </dependencies>
 
             <build>
@@ -159,6 +170,18 @@
                 <dependency>
                     <groupId>org.apache.flink</groupId>
                     <artifactId>flink-clients_${scala.binary.version}</artifactId>
+                    <version>${flink.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>flink-statebackend-rocksdb_2.12</artifactId>
+                    <version>${flink.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.flink</groupId>
+                    <artifactId>flink-s3-fs-hadoop</artifactId>
                     <version>${flink.version}</version>
                     <scope>provided</scope>
                 </dependency>

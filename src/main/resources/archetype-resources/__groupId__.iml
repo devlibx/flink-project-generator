@@ -98,5 +98,8 @@
     <orderEntry type="library" name="Maven: org.apache.flink:flink-clients_2.11:1.14.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.flink:flink-optimizer:1.14.2" level="project" />
     <orderEntry type="library" name="Maven: commons-cli:commons-cli:1.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-statebackend-rocksdb_2.12:1.14.2" level="project" />
+    <orderEntry type="library" name="Maven: com.ververica:frocksdbjni:6.20.3-ververica-1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.flink:flink-s3-fs-hadoop:1.14.2" level="project" />
   </component>
 </module>
