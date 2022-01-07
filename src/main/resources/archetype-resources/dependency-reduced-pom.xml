@@ -51,7 +51,7 @@
                   </filters>
                   <transformers>
                     <transformer>
-                      <mainClass>${package}.example.timer.Job</mainClass>
+                      <mainClass>${symbol_dollar}{main.class}</mainClass>
                     </transformer>
                   </transformers>
                 </configuration>
@@ -117,7 +117,7 @@
                   </filters>
                   <transformers>
                     <transformer>
-                      <mainClass>${package}.example.timer.Job</mainClass>
+                      <mainClass>${package}.window.eventcount.EventCountJob</mainClass>
                     </transformer>
                   </transformers>
                 </configuration>
@@ -130,7 +130,7 @@
         <dependency>
           <groupId>org.apache.flink</groupId>
           <artifactId>flink-streaming-java_2.11</artifactId>
-          <version>1.14.2</version>
+          <version>1.12.1</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
@@ -142,11 +142,7 @@
               <groupId>org.apache.flink</groupId>
             </exclusion>
             <exclusion>
-              <artifactId>flink-runtime</artifactId>
-              <groupId>org.apache.flink</groupId>
-            </exclusion>
-            <exclusion>
-              <artifactId>flink-scala_2.11</artifactId>
+              <artifactId>flink-runtime_2.11</artifactId>
               <groupId>org.apache.flink</groupId>
             </exclusion>
             <exclusion>
@@ -166,11 +162,11 @@
         <dependency>
           <groupId>org.apache.flink</groupId>
           <artifactId>flink-clients_2.11</artifactId>
-          <version>1.14.2</version>
+          <version>1.12.1</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
-              <artifactId>flink-optimizer</artifactId>
+              <artifactId>flink-optimizer_2.11</artifactId>
               <groupId>org.apache.flink</groupId>
             </exclusion>
             <exclusion>
@@ -182,7 +178,7 @@
               <groupId>org.apache.flink</groupId>
             </exclusion>
             <exclusion>
-              <artifactId>flink-runtime</artifactId>
+              <artifactId>flink-runtime_2.11</artifactId>
               <groupId>org.apache.flink</groupId>
             </exclusion>
             <exclusion>
@@ -194,19 +190,19 @@
         <dependency>
           <groupId>org.apache.flink</groupId>
           <artifactId>flink-statebackend-rocksdb_2.12</artifactId>
-          <version>1.14.2</version>
+          <version>1.12.1</version>
           <scope>provided</scope>
           <exclusions>
             <exclusion>
               <artifactId>frocksdbjni</artifactId>
-              <groupId>com.ververica</groupId>
+              <groupId>com.data-artisans</groupId>
             </exclusion>
           </exclusions>
         </dependency>
         <dependency>
           <groupId>org.apache.flink</groupId>
           <artifactId>flink-s3-fs-hadoop</artifactId>
-          <version>1.14.2</version>
+          <version>1.12.1</version>
           <scope>provided</scope>
         </dependency>
       </dependencies>
@@ -234,7 +230,7 @@
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-streaming-java_2.11</artifactId>
-      <version>1.14.2</version>
+      <version>1.12.1</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -246,11 +242,7 @@
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>flink-runtime</artifactId>
-          <groupId>org.apache.flink</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>flink-scala_2.11</artifactId>
+          <artifactId>flink-runtime_2.11</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
@@ -270,11 +262,11 @@
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-clients_2.11</artifactId>
-      <version>1.14.2</version>
+      <version>1.12.1</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
-          <artifactId>flink-optimizer</artifactId>
+          <artifactId>flink-optimizer_2.11</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
@@ -286,7 +278,7 @@
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>flink-runtime</artifactId>
+          <artifactId>flink-runtime_2.11</artifactId>
           <groupId>org.apache.flink</groupId>
         </exclusion>
         <exclusion>
@@ -298,30 +290,32 @@
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-statebackend-rocksdb_2.12</artifactId>
-      <version>1.14.2</version>
+      <version>1.12.1</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>frocksdbjni</artifactId>
-          <groupId>com.ververica</groupId>
+          <groupId>com.data-artisans</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-s3-fs-hadoop</artifactId>
-      <version>1.14.2</version>
+      <version>1.12.1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
   <properties>
+    <flink.version>1.12.1</flink.version>
     <target.java.version>1.8</target.java.version>
+    <maven.compiler.target>${symbol_dollar}{target.java.version}</maven.compiler.target>
     <scala.binary.version>2.11</scala.binary.version>
     <log4j.version>2.16.0</log4j.version>
-    <flink.version>1.14.2</flink.version>
-    <maven.compiler.source>${symbol_dollar}{target.java.version}</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>${symbol_dollar}{target.java.version}</maven.compiler.target>
+    <easy.flink.version>0.0.7</easy.flink.version>
+    <main.class>${package}.window.eventcount.EventCountJob</main.class>
+    <maven.compiler.source>${symbol_dollar}{target.java.version}</maven.compiler.source>
   </properties>
 </project>
 

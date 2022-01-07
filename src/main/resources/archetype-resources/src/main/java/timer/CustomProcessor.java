@@ -1,7 +1,7 @@
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
-package ${package}.example.timer;
+package ${package}.timer;
 
 import ${package}.pojo.Order;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +39,7 @@ public class CustomProcessor extends KeyedProcessFunction<Long, Order, Alert> {
     }
 
     static int i = 0;
+
     @Override
     public void processElement(Order value, Context context, Collector<Alert> out) throws Exception {
 
