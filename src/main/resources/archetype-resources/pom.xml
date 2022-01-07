@@ -20,6 +20,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.github.devlibx.flink</groupId>
+            <artifactId>easy-flink</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-walkthrough-common_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
