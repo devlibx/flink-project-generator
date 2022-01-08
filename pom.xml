@@ -20,7 +20,7 @@
         <connection>scm:git:https://github.com/devlibx/flink-project-generator.git</connection>
         <developerConnection>scm:git:https://github.com/devlibx/flink-project-generator.git</developerConnection>
         <url>https://github.com/devlibx/java-project-generator/tree/master</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
   </scm>
 
     <licenses>
@@ -162,7 +162,7 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <version>3.0.0-M1</version>
                         <configuration>
-                            <tagNameFormat>{project.version}</tagNameFormat>
+                            <tagNameFormat>v@{project.version}</tagNameFormat>
                         </configuration>
                     </plugin>
                 </plugins>
