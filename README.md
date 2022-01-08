@@ -9,7 +9,7 @@ mvn -DinteractiveMode=false archetype:generate -DarchetypeGroupId=io.github.devl
 ```
 
 #### Running code
-This will include flink jar in the fat jar
+This will include flink jar in the fat jar.
 ```shell
 mvn clean install -P idea
 java -cp target/my-app-1.0-SNAPSHOT.jar:.  com.myapp.Job
