@@ -23,3 +23,20 @@ java -cp target/my-app-1.0-SNAPSHOT.jar:.  --bucket <bucket> --file <file> com.m
 ```shell
 mvn archetype:create-from-project
 ```
+
+
+#### Setup Flink
+1. Download and extract flink "version flink-1.12.2"
+2. Copy following jars in "lib" dir
+```shell
+<install dir>/opt/flink-s3-fs-hadoop-1.12.2.jar <install dir>/lib/
+<install dir>/opt/flink-s3-fs-presto-1.12.2.jar <install dir>/lib/
+```
+3. Start cluster
+```shell
+# From bin dir
+./start-cluster.sh
+
+Launch:
+http://localhost:8081/
+```

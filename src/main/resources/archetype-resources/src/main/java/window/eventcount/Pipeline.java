@@ -4,21 +4,21 @@
 package ${package}.window.eventcount;
 
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
+import io.github.devlibx.easy.flink.functions.EventNotReceivedInWindowKeyedProcessFunction;
+import io.github.devlibx.easy.flink.functions.common.EventCount;
 import io.github.devlibx.easy.flink.window.CountAggregatorFunction;
 import ${package}.pojo.Order;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.util.Collector;
-import org.apache.flink.walkthrough.common.entity.Alert;
 
+@Slf4j
 public class Pipeline {
 
-
-    SingleOutputStreamOperator<Alert> process(StreamExecutionEnvironment env, DataStream<Order> orders, StringObjectMap parameter) {
+    SingleOutputStreamOperator<EventCount> process(StreamExecutionEnvironment env, DataStream<Order> orders, StringObjectMap parameter) {
 
         // FOR CLIENT TO CHANGE - Filter orders
         // Let's say you want to filter only failed orders.
@@ -41,19 +41,12 @@ public class Pipeline {
                 // Sum all the orders in this window
                 .aggregate(new CountAggregatorFunction<>())
 
+                .keyBy(value -> "1")
+
                 // Finally output the result at the end of each slide
-                .process(new ProcessFunction<Integer, Alert>() {
-                    @Override
-                    public void processElement(Integer count, Context context, Collector<Alert> collector) throws Exception {
+                .process(new EventNotReceivedInWindowKeyedProcessFunction(slide + 10))
 
-                        // FOR CLIENT TO CHANGE - this is your own logic
-                        // Here I am emitting a object names Alert -> you can change it
-                        Alert alert = new Alert();
-                        alert.setId(count);
-                        collector.collect(alert);
-
-                    }
-                })
+                // Name this operation for display
                 .name("OrderAggregator");
     }
 }

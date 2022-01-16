@@ -54,6 +54,6 @@ public class EventCountJob implements MainTemplate.RunJob {
         // The output of "Pipeline" class is sent to a Print sink -> you can send to some topic if required
 
         // Multi-Source example - One more sink from same source
-        orders.addSink(new PrintSinkFunction<>()).name("PrintSink2").uid(UUID.randomUUID().toString());
+        // orders.addSink(new PrintSinkFunction<>()).name("PrintSink2").uid(UUID.randomUUID().toString());
     }
 }
