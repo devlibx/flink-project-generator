@@ -16,8 +16,8 @@
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
         <log4j.version>2.16.0</log4j.version>
-        <easy.flink.version>0.0.8</easy.flink.version>
-
+        <easy.flink.version>0.0.13</easy.flink.version>
+        <jackson.version>2.12.0</jackson.version>
         <main.class>io.github.devlibx.flink.example.window.eventcount.EventCountJob</main.class>
     </properties>
 
@@ -26,7 +26,15 @@
             <groupId>io.github.devlibx.flink</groupId>
             <artifactId>easy-flink</artifactId>
             <version>${easy.flink.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.amazonaws</groupId>
+                    <artifactId>aws-java-sdk-s3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
+        <!-- Flink dependencies -->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-walkthrough-common_${scala.binary.version}</artifactId>
@@ -38,26 +46,59 @@
             <version>${flink.version}</version>
         </dependency>
 
-        <dependency>
+        <!-- S3 dependency -->
+        <!--<dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.12.132</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
+        <!-- Utils -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.16</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.12.0</version>
-        </dependency>
-        <dependency>
             <groupId>io.github.devlibx.easy</groupId>
             <artifactId>helper</artifactId>
-            <version>0.0.58</version>
+            <version>0.0.72</version>
             <exclusions>
                 <exclusion>
                     <artifactId>logback-core</artifactId>
@@ -66,6 +107,10 @@
                 <exclusion>
                     <artifactId>logback-classic</artifactId>
                     <groupId>ch.qos.logback</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -248,6 +293,9 @@
                 <configuration>
                     <source>${target.java.version}</source>
                     <target>${target.java.version}</target>
+                    <excludes>
+                        <exclude>target/generated-sources/archetype/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

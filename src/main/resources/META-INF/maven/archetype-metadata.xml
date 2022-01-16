@@ -50,6 +50,8 @@
       <directory></directory>
       <includes>
         <include>frauddetection.iml</include>
+        <include>frauddetection.ipr</include>
+        <include>frauddetection.iws</include>
         <include>README.md</include>
         <include>.gitignore</include>
       </includes>
