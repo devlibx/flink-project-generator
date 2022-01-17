@@ -30,7 +30,7 @@ public class EventCountJob implements MainTemplate.RunJob {
         env.getConfig().setAutoWatermarkInterval(3000);
 
         // Create a kafka source
-        DataStream<Order> orders = KafkaSourceHelper.flink1_12_2_KafkaSource(
+        DataStream<Order> orders = KafkaSourceHelper.flink1_14_2_KafkaSource(
                 KafkaSourceHelper.KafkaSourceConfig.builder()
                         .brokers(parameter.get("brokers", "localhost:9092"))
                         .groupId(parameter.get("groupId", "1234"))

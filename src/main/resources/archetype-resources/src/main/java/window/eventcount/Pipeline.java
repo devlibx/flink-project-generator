@@ -4,6 +4,7 @@
 package ${package}.window.eventcount;
 
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
+import io.github.devlibx.easy.flink.functions.EventCountAggregatorInWindowKeyedProcessFunction;
 import io.github.devlibx.easy.flink.functions.EventNotReceivedInWindowKeyedProcessFunction;
 import io.github.devlibx.easy.flink.functions.common.EventCount;
 import io.github.devlibx.easy.flink.window.CountAggregatorFunction;
@@ -44,7 +45,8 @@ public class Pipeline {
                 .keyBy(value -> "1")
 
                 // Finally output the result at the end of each slide
-                .process(new EventNotReceivedInWindowKeyedProcessFunction(slide + 10))
+                // .process(new EventNotReceivedInWindowKeyedProcessFunction(slide + 10))
+                .process(new EventCountAggregatorInWindowKeyedProcessFunction())
 
                 // Name this operation for display
                 .name("OrderAggregator");

@@ -10,15 +10,16 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <flink.version>1.12.1</flink.version>
+        <flink.version>1.14.2</flink.version>
         <target.java.version>1.8</target.java.version>
         <scala.binary.version>2.11</scala.binary.version>
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
         <log4j.version>2.16.0</log4j.version>
-        <easy.flink.version>0.0.13</easy.flink.version>
+        <easy.flink.version>0.0.16-SNAPSHOT</easy.flink.version>
         <jackson.version>2.12.0</jackson.version>
-        <main.class>io.github.devlibx.flink.example.window.eventcount.EventCountJob</main.class>
+        <!--<main.class>io.github.devlibx.flink.example.window.eventcount.EventCountJob</main.class>-->
+        <main.class>io.github.devlibx.flink.example.logevent.Job</main.class>
     </properties>
 
     <dependencies>
@@ -30,6 +31,14 @@
                 <exclusion>
                     <groupId>com.amazonaws</groupId>
                     <artifactId>aws-java-sdk-s3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -72,21 +81,25 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>${jackson.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-cbor</artifactId>
             <version>${jackson.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Utils -->
@@ -111,6 +124,10 @@
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

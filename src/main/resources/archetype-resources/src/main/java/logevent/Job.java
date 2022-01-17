@@ -9,6 +9,7 @@ import io.github.devlibx.easy.flink.utils.KafkaSourceHelper;
 import io.github.devlibx.easy.flink.utils.MainTemplate;
 import ${package}.pojo.FlattenLogEvent;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -26,7 +27,7 @@ public class Job implements MainTemplate.RunJob {
         env.getConfig().setAutoWatermarkInterval(3000);
 
         // Create a kafka source
-        DataStream<LogEvent> orders = KafkaSourceHelper.flink1_12_2_KafkaSource(
+        DataStream<LogEvent> orders = KafkaSourceHelper.flink1_14_2_KafkaSource(
                 KafkaSourceHelper.KafkaSourceConfig.builder()
                         .brokers(parameter.getRequired("LogEventJob.input.brokers"))
                         .groupId(parameter.getRequired("LogEventJob.input.groupId"))
@@ -50,7 +51,7 @@ public class Job implements MainTemplate.RunJob {
         );
 
         // Setup kafka sink as output
-        FlinkKafkaProducer<FlattenLogEvent> kafkaSink = KafkaSourceHelper.flink1_12_2_KafkaSink(
+        KafkaSink<FlattenLogEvent> kafkaSink = KafkaSourceHelper.flink1_14_2_KafkaSink(
                 KafkaSourceHelper.KafkaSinkConfig.builder()
                         .brokers(parameter.getRequired("LogEventJob.output.brokers"))
                         .topic(parameter.getRequired("LogEventJob.output.topic"))
@@ -58,7 +59,8 @@ public class Job implements MainTemplate.RunJob {
                 new ObjectToKeyConvertor(),
                 FlattenLogEvent.class
         );
-        outputStream.addSink(kafkaSink).name("KafkaSink").uid(UUID.randomUUID().toString());
+        outputStream.sinkTo(kafkaSink).name("KafkaSink").uid(UUID.randomUUID().toString());
+        // outputStream.addSink(kafkaSink).name("KafkaSink").uid(UUID.randomUUID().toString());
     }
 
     public static void main(String[] args) throws Exception {
