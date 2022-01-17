@@ -5,7 +5,7 @@ This sample command is creating a project with package "com.myapp" and in folder
 rm -rf my-app 
 mvn -DinteractiveMode=false archetype:generate -DarchetypeGroupId=io.github.devlibx.tools.java.maven \
         -DarchetypeArtifactId=flink-project-generator -DarchetypeVersion=0.0.12 -DgroupId=com.myapp \
-        -DartifactId=my-app               
+        -DartifactId=my-app                
 ```
 
 #### Running code
