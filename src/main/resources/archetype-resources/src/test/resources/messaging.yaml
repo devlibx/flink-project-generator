@@ -1,0 +1,18 @@
+messaging:
+  producers:
+    orders:
+      topic: orders
+      brokers: localhost:9092
+      sync: false
+      retries: 0
+      acks: 1
+      request.timeout.ms: 100
+      value.serializer: org.apache.kafka.common.serialization.BytesSerializer
+  consumers:
+    orders:
+      topic: orders_out
+      brokers: localhost:9092
+      sync: true
+      group.id: random_1234
+      key.deserializer: org.apache.kafka.common.serialization.BytesDeserializer
+      value.deserializer: org.apache.kafka.common.serialization.BytesDeserializer
