@@ -1,14 +1,14 @@
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
-package ${package}.example.window.eventcount;
+package io.github.devlibx.flink.example.window.eventcount;
 
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
 import io.github.devlibx.easy.flink.functions.EventCountAggregatorInWindowKeyedProcessFunction;
 import io.github.devlibx.easy.flink.functions.EventNotReceivedInWindowKeyedProcessFunction;
 import io.github.devlibx.easy.flink.functions.common.EventCount;
 import io.github.devlibx.easy.flink.window.CountAggregatorFunction;
-import ${package}.example.pojo.Order;
+import io.github.devlibx.flink.example.pojo.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;

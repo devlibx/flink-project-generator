@@ -1,10 +1,10 @@
 #set( $symbol_pound = '#' )
 #set( $symbol_dollar = '$' )
 #set( $symbol_escape = '\' )
-package ${package}.example.logevent;
+package io.github.devlibx.flink.example.logevent;
 
 import io.gitbub.devlibx.easy.helper.common.LogEvent;
-import ${package}.example.pojo.FlattenLogEvent;
+import io.github.devlibx.flink.example.pojo.FlattenLogEvent;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.state.StateTtlConfig;
