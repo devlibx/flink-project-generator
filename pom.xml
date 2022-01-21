@@ -4,7 +4,7 @@
 
     <groupId>io.github.devlibx.tools.java.maven</groupId>
     <artifactId>flink-project-generator</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>0.0.13-SNAPSHOT</version>
     <packaging>maven-archetype</packaging>
     <name>flink-project-generator</name>
     <url>https://github.com/devlibx/flink-project-generator</url>
