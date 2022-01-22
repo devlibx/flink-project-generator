@@ -19,7 +19,6 @@ java -cp target/my-app-1.0-SNAPSHOT.jar:.  com.myapp.Job
 This will include flink jar in the fat jar
 ```shell
 mvn clean install
- 
 # Launch with Flink
 ```
 git p
