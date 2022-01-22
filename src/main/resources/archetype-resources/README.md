@@ -21,7 +21,7 @@ java -cp target/my-app-1.0-SNAPSHOT.jar:.  --bucket <bucket> --file <file> com.m
 
 ### Sample commands
 ```shell
-mvn archetype:create-from-project
+mvn clean archetype:create-from-project
 ```
 
 
