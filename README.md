@@ -4,13 +4,13 @@ This sample command is creating a project with package "com.myapp" and in folder
 ```shell
 rm -rf my-app 
 mvn -DinteractiveMode=false archetype:generate -DarchetypeGroupId=io.github.devlibx.tools.java.maven \
-        -DarchetypeArtifactId=flink-project-generator -DarchetypeVersion=0.0.14 -DgroupId=com.myapp \
+        -DarchetypeArtifactId=flink-project-generator -DarchetypeVersion=0.0.18 -DgroupId=com.myapp \
         -DartifactId=my-app
 
 OR
         
 mvn -DinteractiveMode=false archetype:generate -DarchetypeGroupId=io.github.devlibx.tools.java.maven \
-        -DarchetypeArtifactId=flink-project-generator -DarchetypeVersion=0.0.16-SNAPSHOT -DgroupId=com.myapp \
+        -DarchetypeArtifactId=flink-project-generator -DarchetypeVersion=0.0.19-SNAPSHOT -DgroupId=com.myapp \
         -DartifactId=my-app                        
 ```
 
