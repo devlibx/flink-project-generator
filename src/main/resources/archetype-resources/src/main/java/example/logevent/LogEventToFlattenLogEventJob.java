@@ -3,6 +3,7 @@
 #set( $symbol_escape = '\' )
 package ${package}.example.logevent;
 
+import com.google.common.base.Strings;
 import io.gitbub.devlibx.easy.helper.common.LogEvent;
 import io.github.devlibx.easy.flink.utils.KafkaSourceHelper;
 import io.github.devlibx.easy.flink.utils.MainTemplate;
@@ -60,6 +61,12 @@ public class LogEventToFlattenLogEventJob implements MainTemplate.RunJob {
     }
 
     public static void main(String[] args) throws Exception {
+        String jobName = "LogEventJob";
+        try {
+            ParameterTool pt = MainTemplate.buildParameterTool(args);
+            jobName = pt.get("name", jobName);
+        } catch (Exception ignored) {
+        }
         LogEventToFlattenLogEventJob job = new LogEventToFlattenLogEventJob();
         MainTemplate.main(args, "LogEventJob", job);
     }
@@ -67,7 +74,22 @@ public class LogEventToFlattenLogEventJob implements MainTemplate.RunJob {
     private static class ObjectToKeyConvertor implements KafkaSourceHelper.ObjectToKeyConvertor<FlattenLogEvent>, Serializable {
         @Override
         public byte[] key(FlattenLogEvent fe) {
-            return (fe.getIdType() + "-" + fe.getId()).getBytes();
+            return (fe.getId() + "-" + fe.getIdType()).getBytes();
+        }
+
+        @Override
+        public byte[] getKey(FlattenLogEvent fe) {
+            if (Strings.isNullOrEmpty(fe.getIdType())) {
+                return fe.getId().getBytes();
+            } else {
+                return (fe.getId() + "-" + fe.getIdType()).getBytes();
+            }
+        }
+
+        @Override
+        public int partition(FlattenLogEvent fe, byte[] bytes, byte[] bytes1, String s, int[] partitions) {
+            String key = fe.getId() + "-" + fe.getIdType();
+            return key.hashCode() % partitions.length;
         }
     }
 }

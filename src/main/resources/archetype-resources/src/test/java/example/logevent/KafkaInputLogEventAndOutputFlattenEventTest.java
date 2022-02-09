@@ -101,7 +101,7 @@ public class KafkaInputLogEventAndOutputFlattenEventTest {
                 .data("name", "harish", "timestamp", System.currentTimeMillis())
                 .build();
         producer.send(event.getEntity().getId(), JsonUtils.asJson(event).getBytes());
-        log.error("------>>>> Emit event for id={}" + uid);
+        System.out.println("------>>>> Emit event for id=" + uid);
 
         cl.await(30, TimeUnit.SECONDS);
         Assertions.assertEquals(uid, fe.get().getId());
