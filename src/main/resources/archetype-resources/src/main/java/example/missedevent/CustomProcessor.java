@@ -29,8 +29,17 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
 
     @Override
     public void open(Configuration parameters) {
+
+        // Find the TTL for this map
+        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
+        KieSession kSession = droolsHelper.getKieSessionWithAgenda("job-config-builder");
+        ResultMap result = new ResultMap();
+        kSession.insert(result);
+        kSession.fireAllRules();
+        int ttlInSec = result.getInt("retain-ttl-in-sec", 60 * 24);
+
         StateTtlConfig ttlConfig = StateTtlConfig
-                .newBuilder(Time.days(1))
+                .newBuilder(Time.seconds(ttlInSec))
                 .setUpdateType(StateTtlConfig.UpdateType.OnCreateAndWrite)
                 .setStateVisibility(StateTtlConfig.StateVisibility.NeverReturnExpired)
                 .build();
