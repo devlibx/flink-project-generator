@@ -5,9 +5,7 @@ package ${package}.example.drools;
 
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
 import io.github.devlibx.easy.flink.utils.KafkaSourceHelper;
-import io.github.devlibx.easy.rule.drools.DroolsHelper;
 import io.github.devlibx.easy.rule.drools.ResultMap;
-import org.kie.api.runtime.KieSession;
 
 import java.io.Serializable;
 
@@ -19,12 +17,8 @@ public class DroolBasedKeyFinder implements KafkaSourceHelper.ObjectToKeyConvert
     }
 
     private String keyAsString(StringObjectMap value) {
-        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
-        KieSession kSession = droolsHelper.getKieSessionWithAgenda("expiry-event-trigger-partition-key");
         ResultMap result = new ResultMap();
-        kSession.insert(result);
-        kSession.insert(value);
-        kSession.fireAllRules();
+        ruleEngineProvider.getDroolsHelper().execute("expiry-event-trigger-partition-key", value, result);
         return result.getString("partition-key", "");
     }
 

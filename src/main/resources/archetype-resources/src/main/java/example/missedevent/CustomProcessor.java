@@ -6,7 +6,6 @@ package ${package}.example.missedevent;
 import com.google.common.base.Strings;
 import io.gitbub.devlibx.easy.helper.json.JsonUtils;
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
-import io.github.devlibx.easy.rule.drools.DroolsHelper;
 import io.github.devlibx.easy.rule.drools.ResultMap;
 import ${package}.example.drools.IRuleEngineProvider;
 import org.apache.flink.api.common.state.MapState;
@@ -16,7 +15,6 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
-import org.kie.api.runtime.KieSession;
 
 public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMap, StringObjectMap> {
 
@@ -49,12 +47,8 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
     public void processElement(StringObjectMap value, KeyedProcessFunction<String, StringObjectMap, StringObjectMap>.Context ctx, Collector<StringObjectMap> out) throws Exception {
 
         // Make a new session - we will mark agenda-group to run selected rules
-        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
-        KieSession kSession = droolsHelper.getKieSessionWithAgenda("initial-event-trigger");
         ResultMap result = new ResultMap();
-        kSession.insert(result);
-        kSession.insert(value);
-        kSession.fireAllRules();
+        ruleEngineProvider.getDroolsHelper().execute("initial-event-trigger", result, value);
 
         // Check we should retain this object in state
         boolean retainState = result.getBoolean("retain-state", true);
@@ -116,12 +110,8 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
         mapState.remove(ctx.getCurrentKey());
 
         // Make a new session - we will mark agenda-group to run selected rules
-        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
-        KieSession kSession = droolsHelper.getKieSessionWithAgenda("expiry-event-trigger");
         ResultMap result = new ResultMap();
-        kSession.insert(result);
-        kSession.insert(storedState);
-        kSession.fireAllRules();
+        ruleEngineProvider.getDroolsHelper().execute("expiry-event-trigger", result, storedState);
 
         // Trigger event
         boolean triggerEvent = result.getBoolean("trigger-expiry", false);

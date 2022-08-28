@@ -4,11 +4,9 @@
 package ${package}.example.drools;
 
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
-import io.github.devlibx.easy.rule.drools.DroolsHelper;
 import io.github.devlibx.easy.rule.drools.ResultMap;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.java.functions.KeySelector;
-import org.kie.api.runtime.KieSession;
 
 public class DroolsBasedFilterFunction implements FilterFunction<StringObjectMap>, KeySelector<StringObjectMap, String> {
     private final IRuleEngineProvider ruleEngineProvider;
@@ -21,12 +19,8 @@ public class DroolsBasedFilterFunction implements FilterFunction<StringObjectMap
     public boolean filter(StringObjectMap value) throws Exception {
 
         // Make a new session - we will mark agenda-group to run selected rules
-        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
-        KieSession kSession = droolsHelper.getKieSessionWithAgenda("filter-input-stream");
         ResultMap result = new ResultMap();
-        kSession.insert(result);
-        kSession.insert(value);
-        kSession.fireAllRules();
+        ruleEngineProvider.getDroolsHelper().execute("filter-input-stream", value, result);
 
         // Skip if rule engine skips it
         return !result.getBoolean("skip", false);
@@ -36,12 +30,11 @@ public class DroolsBasedFilterFunction implements FilterFunction<StringObjectMap
     public String getKey(StringObjectMap value) throws Exception {
 
         // Make a new session - we will mark agenda-group to run selected rules
-        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
-        KieSession kSession = droolsHelper.getKieSessionWithAgenda("filter-input-stream");
+
+
         ResultMap result = new ResultMap();
-        kSession.insert(result);
-        kSession.insert(value);
-        kSession.fireAllRules();
+        ruleEngineProvider.getDroolsHelper().execute("filter-input-stream", value, result);
+
 
         return result.getString("group-key");
     }
