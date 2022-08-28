@@ -9,6 +9,12 @@
         <include>**/*.java</include>
       </includes>
     </fileSet>
+    <fileSet packaged="true" encoding="UTF-8">
+      <directory>src/main/java</directory>
+      <includes>
+        <include>**/*.md</include>
+      </includes>
+    </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/resources</directory>
       <includes>
@@ -40,21 +46,21 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>.idea/codeStyles</directory>
+      <directory>.idea</directory>
       <includes>
         <include>**/*.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>.idea</directory>
+      <directory>config</directory>
       <includes>
-        <include>**/*.xml</include>
+        <include>**/*.properties</include>
       </includes>
     </fileSet>
     <fileSet encoding="UTF-8">
-      <directory>.idea</directory>
+      <directory>docs/testdata</directory>
       <includes>
-        <include>**/*.gitignore</include>
+        <include>**/*.drl</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
@@ -68,8 +74,6 @@
       <directory></directory>
       <includes>
         <include>frauddetection.iml</include>
-        <include>frauddetection.ipr</include>
-        <include>frauddetection.iws</include>
         <include>README.md</include>
         <include>.gitignore</include>
       </includes>
