@@ -38,7 +38,7 @@ public class Main implements MainTemplate.RunJob {
                 )
                 .filter(new DroolsBasedFilterFunction(ruleEngineProvider))
                 .keyBy(new DroolsBasedFilterFunction(ruleEngineProvider))
-                .process(new CustomProcessor(ruleEngineProvider));
+                .process(new CustomProcessor(ruleEngineProvider, parameter.getInt("state.ttl", 24 * 60)));
 
         // Setup kafka sink as output
         KafkaSink<StringObjectMap> kafkaSink = KafkaSourceHelper.flink1_14_2_KafkaSink(

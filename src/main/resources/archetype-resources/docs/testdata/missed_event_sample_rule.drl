@@ -2,15 +2,8 @@ import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
 import io.github.devlibx.easy.rule.drools.ResultMap;
 import java.util.Objects;
 
-rule "State TTL"
-  dialect "java"
-  agenda-group "job-config-builder"
-  when
-      resultMap: ResultMap()
-  then
-      resultMap.put("retain-ttl-in-sec", 600);
-end
-
+// This rule will run and will return "skip=true" if this event  can be ignored. If this has to be preoccessed
+// then this will return "group-key" to be used as partition or grouping
 rule "Filter Input Stream"
   dialect "java"
   agenda-group "filter-input-stream"
@@ -29,6 +22,10 @@ rule "Filter Input Stream"
       }
 end
 
+
+// This is your business logic. For example here when we get status=INIT then we keep it in state and wait for
+// status=COMPLETED event for that order in 2 sec
+// If we get status=COMPLETED, then we will delete this event from state (no need to do anything for this event)
 rule "Order Initiated"
   dialect "java"
   agenda-group "initial-event-trigger"
@@ -70,6 +67,8 @@ rule "Order Initiated"
 
 end
 
+// We wanted for 2 sec for status=COMPLETED, but if we did not get this event. We will delete state and also initiate a
+// trigger event. Here "trigger-object" will be sent over kafka output topic
 rule "Order Expire Trigger"
   dialect "java"
   agenda-group "expiry-event-trigger"
@@ -78,21 +77,24 @@ rule "Order Expire Trigger"
       resultMap: ResultMap()
   then
       String orderId = event.getString("order_id");
-      System.out.println(event);
-      System.out.println("Input:" + event.getString("user_id") + " " + orderId);
+
+      System.out.println("Order Expire Trigger Input:" + event.getString("user_id") + " " + orderId);
 
       StringObjectMap state = StringObjectMap.of(
              "user_id", event.getString("user_id"),
              "order_id", event.getString("order_id")
       );
       System.out.println("state");
-      System.out.println(state);
+
+      System.out.println("Order Expire Trigger Output:" + state);
+
       resultMap.put("trigger-object", state);
       resultMap.put("trigger-expiry", true);
       resultMap.put("retain-state-key", orderId);
 end
 
 
+// This is a utility - when we send the out event to kafka - we need to specify the kafka partition key
 rule "Order Expire Trigger - Partition Key"
   dialect "java"
   agenda-group "expiry-event-trigger-partition-key"

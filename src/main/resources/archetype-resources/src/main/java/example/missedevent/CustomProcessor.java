@@ -22,24 +22,17 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
 
     private final IRuleEngineProvider ruleEngineProvider;
     private transient MapState<String, StringObjectMap> mapState;
+    private final int ttl;
 
-    public CustomProcessor(IRuleEngineProvider ruleEngineProvider) {
+    public CustomProcessor(IRuleEngineProvider ruleEngineProvider, int ttl) {
         this.ruleEngineProvider = ruleEngineProvider;
+        this.ttl = ttl;
     }
 
     @Override
     public void open(Configuration parameters) {
-
-        // Find the TTL for this map
-        DroolsHelper droolsHelper = ruleEngineProvider.getDroolsHelper();
-        KieSession kSession = droolsHelper.getKieSessionWithAgenda("job-config-builder");
-        ResultMap result = new ResultMap();
-        kSession.insert(result);
-        kSession.fireAllRules();
-        int ttlInSec = result.getInt("retain-ttl-in-sec", 60 * 24);
-
         StateTtlConfig ttlConfig = StateTtlConfig
-                .newBuilder(Time.seconds(ttlInSec))
+                .newBuilder(Time.seconds(ttl))
                 .setUpdateType(StateTtlConfig.UpdateType.OnCreateAndWrite)
                 .setStateVisibility(StateTtlConfig.StateVisibility.NeverReturnExpired)
                 .build();
