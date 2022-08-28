@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
-    <version>${version}</version>
+    <groupId>in.dreamplug.comms.flink.jobs</groupId>
+    <artifactId>push-retry-job</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Flink Walkthrough DataStream Java</name>
     <url>https://flink.apache.org</url>
@@ -17,7 +17,7 @@
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
         <log4j.version>2.16.0</log4j.version>
         <easy.flink.version>0.0.28</easy.flink.version>
-        <easy.version>0.0.83</easy.version>
+        <easy.version>0.0.80</easy.version>
         <jackson.version>2.12.0</jackson.version>
         <main.class>io.github.devlibx.flink.example.logevent.LogEventToFlattenLogEventJob</main.class>
     </properties>
