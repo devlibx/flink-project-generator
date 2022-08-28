@@ -16,7 +16,7 @@
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
         <log4j.version>2.16.0</log4j.version>
-        <easy.flink.version>0.0.28</easy.flink.version>
+        <easy.flink.version>0.0.30</easy.flink.version>
         <easy.version>0.0.83</easy.version>
         <jackson.version>2.12.0</jackson.version>
         <main.class>io.github.devlibx.flink.example.logevent.LogEventToFlattenLogEventJob</main.class>
