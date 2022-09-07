@@ -35,6 +35,6 @@ public class DroolBasedKeyFinder implements KafkaSourceHelper.ObjectToKeyConvert
     @Override
     public int partition(StringObjectMap value, byte[] bytes, byte[] bytes1, String s, int[] partitions) {
         String key = keyAsString(value);
-        return key.hashCode() % partitions.length;
+        return Math.abs(key.hashCode() % partitions.length);
     }
 }
