@@ -10,7 +10,9 @@ sources:
     unique_id: 1234-uid
 
 rule_engine:
-  url: /Users/harishbohara/workspace/personal/flink/flink-examples/src/main/resources/test_aggregate_sample_rule.drl
+  rules:
+    main:
+      url: /Users/harishbohara/workspace/personal/flink/flink-examples/src/main/resources/test_aggregate_sample_rule.drl
 
 ttl:
   main-processor-state-ttl:

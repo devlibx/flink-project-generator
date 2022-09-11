@@ -27,11 +27,14 @@ public class Main implements MainTemplateV2.RunJob<Configuration> {
         configuration.validate();
 
         // Create rule engine
-        String ruleFileLink = configuration.getRuleEngine().getRuleUrl();
+        String ruleFileLink = configuration.getRuleEngine().getRuleByName("main")
+                .orElseThrow(() -> new RuntimeException("Did not find rule with name=main config file"))
+                .getUrl();
         IRuleEngineProvider ruleEngineProvider = new IRuleEngineProvider.ProxyDroolsHelper(ruleFileLink);
 
         // Filter and process
-        SourceConfig sourceConfig = configuration.getSources().get("mainInput");
+        SourceConfig sourceConfig = configuration.getSourceByName("mainInput")
+                .orElseThrow(() -> new RuntimeException("Did not find source with name=mainInput in config file"));
         SingleOutputStreamOperator<StringObjectMap> stream = sourceConfig
                 .getKafkaSourceWithStringObjectMap(env)
                 .filter(new DroolsBasedFilterFunction(ruleEngineProvider, configuration))
