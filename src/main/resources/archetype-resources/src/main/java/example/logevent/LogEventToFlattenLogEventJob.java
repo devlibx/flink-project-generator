@@ -37,6 +37,9 @@ public class LogEventToFlattenLogEventJob implements MainTemplate.RunJob {
                 UUID.randomUUID().toString(),
                 LogEvent.class
         );
+    }
+
+    void internalRun(StreamExecutionEnvironment env, ParameterTool parameter, DataStream<LogEvent> orders) {
 
         // Ensure that we do not send bad events
         SingleOutputStreamOperator<FlattenLogEvent> outputStream = orders

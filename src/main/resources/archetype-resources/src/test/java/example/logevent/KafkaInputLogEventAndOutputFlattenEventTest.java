@@ -19,9 +19,14 @@ import io.github.devlibx.easy.messaging.service.IMessagingFactory;
 import ${package}.common.KafkaMessagingTestConfig;
 import ${package}.example.pojo.FlattenLogEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,6 +63,60 @@ public class KafkaInputLogEventAndOutputFlattenEventTest {
     }
 
     @Test
+    public void testEndToEnd() throws InterruptedException {
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+        String uid = UUID.randomUUID().toString();
+        long time = System.currentTimeMillis();
+        LogEvent.setGlobalServiceName("test");
+        LogEvent event = LogEvent.build("send")
+                .entity("user", uid)
+                .data("name", "harish", "timestamp", time)
+                .build();
+        DataStream<LogEvent> inputStream = env.fromElements(event);
+
+        ParameterTool parameterTool = Mockito.mock(ParameterTool.class);
+        Mockito.when(parameterTool.getRequired("LogEventJob.output.brokers")).thenReturn("localhost:9092");
+        Mockito.when(parameterTool.getRequired("LogEventJob.output.topic")).thenReturn("orders_out");
+
+
+        // Execute pipeline
+        Thread mainThread = new Thread(() -> {
+            LogEventToFlattenLogEventJob job = new LogEventToFlattenLogEventJob();
+            job.internalRun(env, parameterTool, inputStream);
+            try {
+                env.execute();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        mainThread.start();
+
+        // Listen for output -> this will tell if we are good or not
+        CountDownLatch cl = new CountDownLatch(1);
+        AtomicReference<FlattenLogEvent> fe = new AtomicReference<>();
+        new Thread(() -> {
+            consumer.start((data, noop) -> {
+                try {
+                    FlattenLogEvent ev = JsonUtils.readObject(data.toString(), FlattenLogEvent.class);
+                    System.out.println("------>>>> Got event=" + ev);
+                    if (uid.equals(ev.getEntityId())) {
+                        fe.set(ev);
+                        cl.countDown();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }).start();
+        cl.await(10, TimeUnit.SECONDS);
+
+        Assertions.assertNotNull(fe.get(), "Expected kafka event in out topic and consumer getting it (make sure Kafka is running and has a topic 'orders_out'");
+        Assertions.assertEquals(uid, fe.get().getId());
+    }
+
+    @Test
+    @Disabled
     public void testPipeline() throws Exception {
 
         // Start the job

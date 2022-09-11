@@ -23,6 +23,7 @@ import org.apache.flink.streaming.api.functions.sink.SinkFunction;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -58,6 +59,7 @@ public class EventCountJobTest {
     }
 
     @Test
+    @Disabled
     public void testPipeline() throws Exception {
         // Test UUID
         String uid = UUID.randomUUID().toString();
