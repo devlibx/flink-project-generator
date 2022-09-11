@@ -15,13 +15,13 @@ import io.github.devlibx.miscellaneous.flink.drools.IRuleEngineProvider;
 import io.github.devlibx.miscellaneous.flink.store.GenericTimeWindowAggregationStoreSink;
 import io.github.devlibx.miscellaneous.flink.store.IGenericStateStore;
 import io.github.devlibx.miscellaneous.flink.store.ProxyBackedGenericStateStore;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 public class Main implements MainTemplateV2.RunJob<Configuration> {
 
-    @Override
-    public void run(StreamExecutionEnvironment env, Configuration configuration, Class<Configuration> aClass) {
+    void internalRun(StreamExecutionEnvironment env, Configuration configuration, DataStream<StringObjectMap> inputStream, Class<Configuration> aClass) {
 
         // Make sure we have a good configuration
         configuration.validate();
@@ -32,11 +32,7 @@ public class Main implements MainTemplateV2.RunJob<Configuration> {
                 .getUrl();
         IRuleEngineProvider ruleEngineProvider = new IRuleEngineProvider.ProxyDroolsHelper(ruleFileLink);
 
-        // Filter and process
-        SourceConfig sourceConfig = configuration.getSourceByName("mainInput")
-                .orElseThrow(() -> new RuntimeException("Did not find source with name=mainInput in config file"));
-        SingleOutputStreamOperator<StringObjectMap> stream = sourceConfig
-                .getKafkaSourceWithStringObjectMap(env)
+        SingleOutputStreamOperator<StringObjectMap> stream = inputStream
                 .filter(new DroolsBasedFilterFunction(ruleEngineProvider, configuration))
                 .keyBy(new DroolsBasedFilterFunction(ruleEngineProvider, configuration))
                 .process(new CustomProcessor(ruleEngineProvider, configuration));
@@ -49,6 +45,15 @@ public class Main implements MainTemplateV2.RunJob<Configuration> {
         if (configuration.getMiscellaneousProperties().getBoolean("console-debug-sink-enabled")) {
             stream.addSink(new DebugSync<>());
         }
+    }
+
+    @Override
+    public void run(StreamExecutionEnvironment env, Configuration configuration, Class<Configuration> aClass) {
+        // Filter and process
+        SourceConfig sourceConfig = configuration.getSourceByName("mainInput")
+                .orElseThrow(() -> new RuntimeException("Did not find source with name=mainInput in config file"));
+
+        internalRun(env, configuration, sourceConfig.getKafkaSourceWithStringObjectMap(env), aClass);
     }
 
     public static void main(String[] args) throws Exception {

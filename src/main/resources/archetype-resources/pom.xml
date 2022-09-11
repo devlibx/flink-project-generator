@@ -116,6 +116,7 @@
             <groupId>io.github.devlibx.easy</groupId>
             <artifactId>messaging-kafka</artifactId>
             <version>${easy.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Flink dependencies -->

@@ -24,9 +24,8 @@ import java.util.List;
 import static ${package}.example.aggregation.DroolTest.primaryKeyPrefix;
 import static ${package}.example.aggregation.DroolTest.secondaryKeyPrefix;
 
-public class CustomProcessorFunctionTest {
+public class CustomProcessorTest {
     private final DateTime timeToUse = CalendarUtils.createTime(CalendarUtils.DATETIME_FORMAT_V1, "2022-07-05T17:26:35.302+05:30");
-
 
     @Test
     public void testHeimdallProcessFunction() throws Exception {
