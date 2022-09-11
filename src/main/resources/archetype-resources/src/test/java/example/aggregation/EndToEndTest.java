@@ -3,48 +3,34 @@
 #set( $symbol_escape = '\' )
 package ${package}.example.aggregation;
 
-import io.gitbub.devlibx.easy.helper.json.JsonUtils;
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
-import io.gitbub.devlibx.easy.helper.string.StringHelper;
+import io.gitbub.devlibx.easy.helper.yaml.YamlUtils;
 import io.github.devlibx.easy.flink.utils.v2.config.Configuration;
 import io.github.devlibx.miscellaneous.flink.common.KeyPair;
 import io.github.devlibx.miscellaneous.flink.store.GenericState;
 import io.github.devlibx.miscellaneous.flink.store.IGenericStateStore;
 import io.github.devlibx.miscellaneous.flink.store.ProxyBackedGenericStateStore;
-import org.apache.commons.io.IOUtils;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.UUID;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"all"})
 public class EndToEndTest {
 
     /**
      * This test will run
-     *
-     * @throws Exception
      */
     @Test
     @EnabledOnOs(OS.MAC)
     public void testEventProcessing_EndToEnd() throws Exception {
 
-        // Read config file
-        String file = "jar:///test-aggregation-config.yaml".replace("jar://", "");
-        InputStream in = this.getClass().getResourceAsStream(file);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        String configAsString = IOUtils.toString(in, Charset.defaultCharset());
-        Yaml yaml = new Yaml();
-        Map<String, Object> obj = (Map) yaml.load(configAsString);
-        Configuration configuration = JsonUtils.getCamelCase().readObject((new StringHelper()).stringify(obj), Configuration.class);
+        Configuration configuration = YamlUtils.readYamlFromResourcePath("/test-aggregation-config.yaml", Configuration.class);
 
         // Make input stream with mock data
         String userId = UUID.randomUUID().toString();
