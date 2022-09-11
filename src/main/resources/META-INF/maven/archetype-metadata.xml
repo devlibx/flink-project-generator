@@ -21,6 +21,12 @@
         <include>**/*.properties</include>
       </includes>
     </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <include>**/*.drl</include>
+      </includes>
+    </fileSet>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
       <directory>src/test/java</directory>
       <includes>
@@ -37,6 +43,7 @@
       <directory>src/test/resources</directory>
       <includes>
         <include>**/*.yaml</include>
+        <include>**/*.drl</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
@@ -63,6 +70,12 @@
         <include>**/*.drl</include>
       </includes>
     </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>config</directory>
+      <includes>
+        <include>**/*.yaml</include>
+      </includes>
+    </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory></directory>
       <includes>
@@ -74,6 +87,8 @@
       <directory></directory>
       <includes>
         <include>frauddetection.iml</include>
+        <include>frauddetection.ipr</include>
+        <include>frauddetection.iws</include>
         <include>README.md</include>
         <include>.gitignore</include>
       </includes>

@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 import io.gitbub.devlibx.easy.helper.json.JsonUtils;
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
 import io.github.devlibx.easy.rule.drools.ResultMap;
-import ${package}.example.drools.IRuleEngineProvider;
+import io.github.devlibx.miscellaneous.flink.drools.IRuleEngineProvider;
 import org.apache.flink.api.common.state.MapState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.state.StateTtlConfig;

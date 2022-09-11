@@ -1,0 +1,28 @@
+environment:
+  stateBackend: rocksdb
+
+sources:
+  mainInput:
+    broker: localhost:9092
+    topic: orders_in
+    group_id: 1234
+    name: main_input
+    unique_id: 1234-uid
+
+rule_engine:
+  url: /Users/harishbohara/workspace/personal/flink/flink-examples/src/main/resources/test_aggregate_sample_rule.drl
+
+ttl:
+  main-processor-state-ttl:
+    ttl: 100
+
+state_store:
+  # type: dynamo-in-memory
+  type: dynamo
+  dynamo:
+    table: harish-table
+
+miscellaneous_properties:
+  console-debug-sink-enabled: true
+  debug-drools-print-result-filter-input-stream: false
+  debug-drools-print-result-initial-event-trigger: true

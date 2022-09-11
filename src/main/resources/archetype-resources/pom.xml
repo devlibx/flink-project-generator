@@ -16,33 +16,78 @@
         <maven.compiler.source>${target.java.version}</maven.compiler.source>
         <maven.compiler.target>${target.java.version}</maven.compiler.target>
         <log4j.version>2.16.0</log4j.version>
-        <easy.flink.version>0.0.30</easy.flink.version>
-        <easy.version>0.0.83</easy.version>
+        <powermock.version>1.7.4</powermock.version>
         <jackson.version>2.12.0</jackson.version>
+        <easy.version>0.0.89</easy.version>
+        <java.miscellaneous.version>0.0.23</java.miscellaneous.version>
         <main.class>io.github.devlibx.flink.example.logevent.LogEventToFlattenLogEventJob</main.class>
     </properties>
 
     <dependencies>
+
         <dependency>
-            <groupId>io.github.devlibx.flink</groupId>
-            <artifactId>easy-flink</artifactId>
-            <version>${easy.flink.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.amazonaws</groupId>
-                    <artifactId>aws-java-sdk-s3</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>io.github.devlibx.miscellaneous</groupId>
+            <artifactId>java-util</artifactId>
+            <version>${java.miscellaneous.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.devlibx.miscellaneous</groupId>
+            <artifactId>flink</artifactId>
+            <version>${java.miscellaneous.version}</version>
         </dependency>
 
+        <!-- testing -->
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-symbol-solver-core</artifactId>
+            <version>3.24.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.21.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-test-utils_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+            <version>${flink.version}</version>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-runtime_${scala.binary.version}</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -50,13 +95,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.devlibx.easy</groupId>
-            <artifactId>messaging-kafka</artifactId>
-            <version>${easy.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+            <version>1.8.1</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.github.devlibx.easy</groupId>
-            <artifactId>rule-engine-drools</artifactId>
+            <artifactId>messaging-kafka</artifactId>
             <version>${easy.version}</version>
         </dependency>
 
@@ -71,27 +123,6 @@
             <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
         </dependency>
-
-        <!-- S3 dependency -->
-        <!--<dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.12.132</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
 
         <!-- Jackson -->
         <dependency>
@@ -127,8 +158,19 @@
         </dependency>
         <dependency>
             <groupId>io.github.devlibx.easy</groupId>
+            <artifactId>rule-engine-drools</artifactId>
+            <version>${easy.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>aws-java-sdk-s3</artifactId>
+                    <groupId>com.amazonaws</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.github.devlibx.easy</groupId>
             <artifactId>helper</artifactId>
-            <version>0.0.72</version>
+            <version>${easy.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>logback-core</artifactId>
@@ -277,6 +319,15 @@
                     <version>${flink.version}</version>
                     <scope>provided</scope>
                 </dependency>
+
+                <!-- There is some issue in aws core dependency - I have removed it here. Please add if you find it missing -->
+                <dependency>
+                    <groupId>com.amazonaws</groupId>
+                    <artifactId>aws-java-sdk-core</artifactId>
+                    <version>1.11.1000</version>
+                    <scope>provided</scope>
+                </dependency>
+
             </dependencies>
             <build>
                 <plugins>
@@ -284,6 +335,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
                         <version>3.0.0</version>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
                         <executions>
                             <execution>
                                 <phase>package</phase>
