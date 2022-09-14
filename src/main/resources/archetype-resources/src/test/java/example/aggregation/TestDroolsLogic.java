@@ -115,8 +115,8 @@ public class TestDroolsLogic {
             now = eventTime;
         }
 
-        System.out.println("Event=" + JsonUtils.asJson(event));
-        System.out.println("ExistingState=" + JsonUtils.asJson(existingState));
+        // System.out.println("Event=" + JsonUtils.asJson(event));
+        // System.out.println("ExistingState=" + JsonUtils.asJson(existingState));
 
         final String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
         final String secondaryKey = secondaryKeyPrefix + event.get("data", "category", String.class);
@@ -137,10 +137,13 @@ public class TestDroolsLogic {
         );
         IAggregationUpdater<StringObjectMap> updater = new CustomAggregationUpdater.IncrementCounter();
         aggregationOrdersByUserHelper.process(aggregationOrdersByUser, now, event, eventTime, updater);
-        System.out.println("aggregationOrdersByUser:" + JsonUtils.asJson(aggregationOrdersByUser));
+        // System.out.println("aggregationOrdersByUser:" + JsonUtils.asJson(aggregationOrdersByUser));
 
         // ************************ Aggregation 2 - Count merchants used by user ***************************************
         TimeWindowDataAggregation aggregationOfMerchantsUserUsed = existingState.get(primaryAndSecondaryIdKeyPair, "aggregation", TimeWindowDataAggregation.class);
+        if (aggregationOrdersByUser == null) {
+            System.out.println("****** Error - aggregation with " + primaryIdKeyPair + " is null ****** Error - aggregation with ");
+        }
         TimeWindowDataAggregationHelper<StringObjectMap> aggregationOfMerchantsUserHelper = new TimeWindowDataAggregationHelper<>(
                 TimeWindowDataAggregationHelper.Config.builder()
                         .dayAggregationWindow(7)
@@ -148,7 +151,7 @@ public class TestDroolsLogic {
         );
         updater = new CustomAggregationUpdater.StringAppender(event.get("data", "merchant_id", String.class));
         aggregationOfMerchantsUserHelper.process(aggregationOfMerchantsUserUsed, now, event, eventTime, updater);
-        System.out.println("aggregationOfMerchantsUserUsed:" + JsonUtils.asJson(aggregationOfMerchantsUserUsed));
+        // System.out.println("aggregationOfMerchantsUserUsed:" + JsonUtils.asJson(aggregationOfMerchantsUserUsed));
 
         // What to retain in state
         Map<KeyPair, StringObjectMap> retainObjects = new HashMap<>();
