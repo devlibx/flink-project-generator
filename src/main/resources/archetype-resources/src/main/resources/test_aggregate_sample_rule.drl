@@ -23,8 +23,8 @@ resultMap: ResultMap()
 configuration: Configuration()
 then
 
-  final String primaryKeyPrefix = "ruser_case_1_pk#";
-  final String secondaryKeyPrefix = "ruser_case_1_sk#";
+  final String primaryKeyPrefix = "user_case_1_pk#";
+  final String secondaryKeyPrefix = "user_case_1_sk#";
   final String primaryIdKey = "user_id";
 {
     final List<String> validStatusList = Arrays.asList("COMPLETED", "INIT");
@@ -55,8 +55,8 @@ rule "Fetch State Keys"
       configuration: Configuration()
   then
 
-  final String primaryKeyPrefix = "ruser_case_1_pk#";
-  final String secondaryKeyPrefix = "ruser_case_1_sk#";
+  final String primaryKeyPrefix = "user_case_1_pk#";
+  final String secondaryKeyPrefix = "user_case_1_sk#";
   final String primaryIdKey = "user_id";
 {
     final String debugKey = "debug-drools-print-result-state-keys-func";
@@ -82,8 +82,8 @@ rule "Order Initiated"
       configuration: Configuration()
   then
 
-  final String primaryKeyPrefix = "ruser_case_1_pk#";
-  final String secondaryKeyPrefix = "ruser_case_1_sk#";
+  final String primaryKeyPrefix = "user_case_1_pk#";
+  final String secondaryKeyPrefix = "user_case_1_sk#";
   final String primaryIdKey = "user_id";
 {
     // Constants - change this for your use case
