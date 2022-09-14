@@ -20,10 +20,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * MUST READ:
+ * 1. The member variable in this class are special. All member var will be copied to each Rule file function (in output file)
+ * 2. Any "transient" variable will not be copied to final rule files.
+ * <p>
+ * Wat variable to put in as class member -> some constants which you want in each rule in your output rule file.
+ */
 public class TestDroolsLogic {
-    public DateTime now;
-    public Configuration configuration;
+    public transient DateTime now;
+    public transient Configuration configuration;
 
+    public static final String primaryKeyPrefix = "user_case_1_pk${symbol_pound}";
+    public static final String secondaryKeyPrefix = "user_case_1_sk${symbol_pound}";
+    public static final String primaryIdKey = "user_id";
 
     /**
      * <pre>
@@ -38,7 +48,6 @@ public class TestDroolsLogic {
      * </pre>
      */
     public void onEventReceived(StringObjectMap event, ResultMap resultMap, Configuration configuration) {
-        final String primaryIdKey = "user_id";
         final List<String> validStatusList = Arrays.asList("COMPLETED", "INIT");
         final String debugKey = "debug-drools-print-result-filter-input-stream";
         final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
@@ -70,17 +79,12 @@ public class TestDroolsLogic {
      * </pre>
      */
     public void onEventProcessing_FetchStateKeys(StringObjectMap event, ResultMap resultMap, Configuration configuration) {
-        // Constants - change this for your use case
-        final String primaryKeyPrefix = "user_case_1_pk${symbol_pound}";
-        final String secondaryKeyPrefix = "user_case_1_sk${symbol_pound}";
-
-        final String primaryIdKey = "user_id";
         final String debugKey = "debug-drools-print-result-state-keys-func";
         final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
 
         String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
         String secondaryId = secondaryKeyPrefix + event.get("data", "category", String.class);
-        resultMap.put("states-to-provide", Arrays.asList(new KeyPair(primaryId, "na"), new KeyPair(primaryId, secondaryId)));
+        resultMap.put("states-to-provide", Arrays.asList(new KeyPair(primaryId, secondaryKeyPrefix + "na"), new KeyPair(primaryId, secondaryId)));
 
         if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
             System.out.println(JsonUtils.asJson(resultMap));
@@ -102,9 +106,6 @@ public class TestDroolsLogic {
      */
     public void onEventAfterFilter(StringObjectMap event, ExistingState existingState, ResultMap resultMap, Configuration configuration) {
         // Constants - change this for your use case
-        final String primaryKeyPrefix = "user_case_1_pk${symbol_pound}";
-        final String secondaryKeyPrefix = "user_case_1_sk${symbol_pound}";
-        final String primaryIdKey = "user_id";
         final String debugKey = "debug-drools-print-result-initial-event-trigger";
         final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
 
@@ -114,13 +115,19 @@ public class TestDroolsLogic {
             now = eventTime;
         }
 
+        System.out.println("Event=" + JsonUtils.asJson(event));
+        System.out.println("ExistingState=" + JsonUtils.asJson(existingState));
+
         final String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
         final String secondaryKey = secondaryKeyPrefix + event.get("data", "category", String.class);
-        final KeyPair primaryIdKeyPair = new KeyPair(primaryId, "na");
+        final KeyPair primaryIdKeyPair = new KeyPair(primaryId, secondaryKeyPrefix + "na");
         final KeyPair primaryAndSecondaryIdKeyPair = new KeyPair(primaryId, secondaryKey);
 
         // ************************ Aggregation 1 - Count orders done by user ******************************************
         TimeWindowDataAggregation aggregationOrdersByUser = existingState.get(primaryIdKeyPair, "aggregation", TimeWindowDataAggregation.class);
+        if (aggregationOrdersByUser == null) {
+            System.out.println("****** Error - aggregation with " + primaryIdKeyPair + " is null ****** Error - aggregation with ");
+        }
         TimeWindowDataAggregationHelper<StringObjectMap> aggregationOrdersByUserHelper = new TimeWindowDataAggregationHelper<>(
                 TimeWindowDataAggregationHelper.Config.builder()
                         .dayAggregationWindow(31)

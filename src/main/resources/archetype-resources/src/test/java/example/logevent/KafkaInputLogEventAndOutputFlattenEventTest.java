@@ -63,6 +63,7 @@ public class KafkaInputLogEventAndOutputFlattenEventTest {
     }
 
     @Test
+    @Disabled
     public void testEndToEnd() throws InterruptedException {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 

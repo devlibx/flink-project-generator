@@ -19,6 +19,9 @@ import org.junit.jupiter.api.condition.OS;
 
 import java.util.UUID;
 
+import static ${package}.example.aggregation.TestDroolsLogic.primaryKeyPrefix;
+import static ${package}.example.aggregation.TestDroolsLogic.secondaryKeyPrefix;
+
 @SuppressWarnings({"all"})
 public class EndToEndTest {
 
@@ -63,7 +66,7 @@ public class EndToEndTest {
         int retries = 20;
         while (retries-- >= 0) {
             Thread.sleep(5000);
-            GenericState state = genericStateStore.get(new KeyPair("user_case_1_pk${symbol_pound}" + appleOrder.getString("user_id"), "na").buildKey());
+            GenericState state = genericStateStore.get(new KeyPair(primaryKeyPrefix + appleOrder.getString("user_id"), secondaryKeyPrefix + "na").buildKey());
             if (state != null) {
                 break;
             } else {

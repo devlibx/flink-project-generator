@@ -23,9 +23,9 @@ public class DroolTest {
     public Configuration configuration;
 
     // Constants - change this for your use case
-    public static final String primaryKeyPrefix = "user_case_1_pk${symbol_pound}";
-    public static final String secondaryKeyPrefix = "user_case_1_sk${symbol_pound}";
-    public static final String primaryIdKey = "user_id";
+    public static final String primaryKeyPrefix = TestDroolsLogic.primaryKeyPrefix;
+    public static final String secondaryKeyPrefix = TestDroolsLogic.secondaryKeyPrefix;
+    public static final String primaryIdKey = TestDroolsLogic.primaryIdKey;
 
     @BeforeEach
     public void setup() {
@@ -77,10 +77,6 @@ public class DroolTest {
 
     @Test
     public void testAfterEventIsFiltered_GetStateKeys() {
-        // Constants - change this for your use case
-        final String primaryKeyPrefix = "user_case_1_pk${symbol_pound}";
-        final String secondaryKeyPrefix = "user_case_1_sk${symbol_pound}";
-
         StringObjectMap appleOrder = StringObjectMap.of(
                 "user_id", "1234",
                 "timestamp", now,
@@ -95,7 +91,7 @@ public class DroolTest {
         droolsLogic.onEventProcessing_FetchStateKeys(appleOrder, resultMap, configuration);
         System.out.println("Key 1: " + resultMap.getList("states-to-provide", KeyPair.class).get(0));
         System.out.println("Key 2: " + resultMap.getList("states-to-provide", KeyPair.class).get(1));
-        Assertions.assertEquals(new KeyPair(primaryKeyPrefix + "1234", "na"), resultMap.getList("states-to-provide", KeyPair.class).get(0));
+        Assertions.assertEquals(new KeyPair(primaryKeyPrefix + "1234", secondaryKeyPrefix + "na"), resultMap.getList("states-to-provide", KeyPair.class).get(0));
         Assertions.assertEquals(new KeyPair(primaryKeyPrefix + "1234", secondaryKeyPrefix + "phone"), resultMap.getList("states-to-provide", KeyPair.class).get(1));
     }
 
@@ -119,7 +115,7 @@ public class DroolTest {
 
         String primaryId = primaryKeyPrefix + appleOrder.get(primaryIdKey, String.class);
         String secondaryId = secondaryKeyPrefix + appleOrder.get("data", "category", String.class);
-        KeyPair primaryIdKeyPair = new KeyPair(primaryId, "na");
+        KeyPair primaryIdKeyPair = new KeyPair(primaryId, secondaryKeyPrefix + "na");
         KeyPair primaryAndSecondaryIdKeyPair = new KeyPair(primaryId, secondaryId);
 
         // Calling without any state - assume this is the first event for this user
