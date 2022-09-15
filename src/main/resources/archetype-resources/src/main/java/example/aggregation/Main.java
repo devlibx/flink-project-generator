@@ -16,6 +16,7 @@ import io.github.devlibx.miscellaneous.flink.store.GenericTimeWindowAggregationS
 import io.github.devlibx.miscellaneous.flink.store.IGenericStateStore;
 import io.github.devlibx.miscellaneous.flink.store.ProxyBackedGenericStateStore;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
@@ -32,18 +33,27 @@ public class Main implements MainTemplateV2.RunJob<Configuration> {
                 .getUrl();
         IRuleEngineProvider ruleEngineProvider = new IRuleEngineProvider.ProxyDroolsHelper(ruleFileLink);
 
-        SingleOutputStreamOperator<StringObjectMap> stream = inputStream
+        // Step 1 - Filter input stream
+        SingleOutputStreamOperator<StringObjectMap> filteredStream = inputStream
                 .filter(new DroolsBasedFilterFunction(ruleEngineProvider, configuration))
-                .keyBy(new DroolsBasedFilterFunction(ruleEngineProvider, configuration))
-                .process(new CustomProcessor(ruleEngineProvider, configuration));
+                .name("filter").uid("d16903ba-3524-11ed-a261-0242ac120002");
 
-        // Sand to store
+        // Step 2 - Key by some id e.g. user id (mandatory for state-processor to have keyed stream)
+        KeyedStream<StringObjectMap, String> keyedStream = filteredStream.keyBy(new DroolsBasedFilterFunction(ruleEngineProvider, configuration));
+
+        // Step 3 - Do the custom processing
+        SingleOutputStreamOperator<StringObjectMap> processedStream = keyedStream.process(new CustomProcessor(ruleEngineProvider, configuration))
+                .name("processed-stream").uid("d16904b4-3524-11ed-a261-0242ac120002");
+
+        // Step 4.1 - Send it to store
         IGenericStateStore genericStateStore = new ProxyBackedGenericStateStore(configuration);
-        stream.addSink(new GenericTimeWindowAggregationStoreSink(genericStateStore));
+        processedStream.addSink(new GenericTimeWindowAggregationStoreSink(genericStateStore))
+                .name("store-sink").uid("d169059a-3524-11ed-a261-0242ac120002");
 
-        // Debug to output
         if (configuration.getMiscellaneousProperties().getBoolean("console-debug-sink-enabled")) {
-            stream.addSink(new DebugSync<>());
+            // Step 4.2 - Send it to debug
+            processedStream.addSink(new DebugSync<>())
+                    .name("debug-sink").uid("d169066c-3524-11ed-a261-0242ac120002");
         }
     }
 

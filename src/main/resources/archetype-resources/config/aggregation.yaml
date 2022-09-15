@@ -7,7 +7,7 @@ sources:
     topic: orders_in
     group_id: 1234
     name: main_input
-    unique_id: 1234-uid
+    unique_id: d168ffaa-3524-11ed-a261-0242ac120002
 
 rule_engine:
   rules:
