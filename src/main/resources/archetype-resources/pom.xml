@@ -20,8 +20,8 @@
         <powermock.version>1.7.4</powermock.version>
         <jackson.version>2.12.0</jackson.version>
         <easy.version>0.0.90</easy.version>
-        <java.miscellaneous.version>0.0.27</java.miscellaneous.version>
-        <easy.flink.version>0.0.49</easy.flink.version>
+        <java.miscellaneous.version>0.0.28</java.miscellaneous.version>
+        <easy.flink.version>0.0.52</easy.flink.version>
         <main.class>io.github.devlibx.flink.example.logevent.LogEventToFlattenLogEventJob</main.class>
     </properties>
 
