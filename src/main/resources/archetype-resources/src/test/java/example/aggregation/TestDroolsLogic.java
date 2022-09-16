@@ -115,6 +115,12 @@ public class TestDroolsLogic {
             now = eventTime;
         }
 
+        // Set TTL for records
+        long ttl = DateTime.now().plusDays(32).getMillis();
+        if (event.getBoolean("is_test", true)) {
+            ttl = DateTime.now().plusSeconds(30).getMillis();
+        }
+
         // System.out.println("Event=" + JsonUtils.asJson(event));
         // System.out.println("ExistingState=" + JsonUtils.asJson(existingState));
 
@@ -161,11 +167,13 @@ public class TestDroolsLogic {
         Map<KeyPair, StringObjectMap> forwardObjects = new HashMap<>();
         forwardObjects.put(primaryIdKeyPair, StringObjectMap.of(
                 "key_pair", primaryIdKeyPair,
-                "aggregation", aggregationOrdersByUser
+                "aggregation", aggregationOrdersByUser,
+                "ttl", ttl
         ));
         forwardObjects.put(primaryAndSecondaryIdKeyPair, StringObjectMap.of(
                 "key_pair", primaryAndSecondaryIdKeyPair,
-                "aggregation", aggregationOfMerchantsUserUsed
+                "aggregation", aggregationOfMerchantsUserUsed,
+                "ttl", ttl
         ));
 
         resultMap.put("retain-state", true);

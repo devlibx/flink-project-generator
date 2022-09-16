@@ -19,10 +19,31 @@ ttl:
     ttl: 100
 
 state_store:
-  # type: dynamo-in-memory
   type: dynamo
+  enableMultiDb: false
   dynamo:
+    store_group:
+      name: main_store
+      priority: 0
     table: harish-table
+  aerospike:
+    store_group:
+      name: main_store
+      priority: 1
+    namespace: test
+    set: test_set
+    hosts:
+      - { host: localhost, port: 3000 }
+    properties:
+      enable-send-key: true
+      writePolicy.socketTimeout: 1000
+      readPolicy.socketTimeout: 1000
+      writePolicy.timeout: 1000
+      readPolicy.timeout: 1000
+      throwExceptionOnWriteError: false
+      throwExceptionOnReadError: false
+      debug-aerospike-enabled-write: true
+      debug-aerospike-enabled-read: true
 
 miscellaneous_properties:
   console-debug-sink-enabled: true

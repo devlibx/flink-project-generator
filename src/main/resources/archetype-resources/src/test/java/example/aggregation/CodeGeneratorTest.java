@@ -11,7 +11,7 @@ import org.junit.jupiter.api.condition.OS;
 import java.io.File;
 import java.io.IOException;
 
-public class CodeGenerator {
+public class CodeGeneratorTest {
 
     @Test
     @EnabledOnOs(OS.MAC)
