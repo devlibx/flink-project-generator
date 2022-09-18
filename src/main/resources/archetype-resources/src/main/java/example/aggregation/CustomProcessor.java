@@ -24,6 +24,7 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import java.util.Map;
 public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMap, StringObjectMap> {
     private final IRuleEngineProvider ruleEngineProvider;
     private transient MapState<String, TimeWindowDataAggregation> mapState;
+    private transient MapState<String, String> idempotenceState;
     private final Configuration configuration;
 
     @Setter
@@ -57,13 +59,37 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
         );
         mapStateDescriptor.enableTimeToLive(ttlConfig);
         mapState = getRuntimeContext().getMapState(mapStateDescriptor);
+
+        int idempotencyTTL = 86400;
+        try {
+            idempotencyTTL = configuration.getTtl().get("main-processor-state-idempotency-ttl", "ttl", Integer.class);
+        } catch (Exception e) {
+            log.error("Did not find TTL for Idempotency - using default of 1 Day");
+        }
+        StateTtlConfig idempotenceTtlConfig = StateTtlConfig
+                .newBuilder(Time.seconds(idempotencyTTL))
+                .setUpdateType(StateTtlConfig.UpdateType.OnCreateAndWrite)
+                .setStateVisibility(StateTtlConfig.StateVisibility.NeverReturnExpired)
+                .build();
+        MapStateDescriptor<String, String> idempotenceStateDescriptor = new MapStateDescriptor<>(
+                "main-processor-idempotence-state",
+                String.class,
+                String.class
+        );
+        idempotenceStateDescriptor.enableTimeToLive(idempotenceTtlConfig);
+        idempotenceState = getRuntimeContext().getMapState(idempotenceStateDescriptor);
     }
 
     @Override
     public void processElement(StringObjectMap value, KeyedProcessFunction<String, StringObjectMap, StringObjectMap>.Context ctx, Collector<StringObjectMap> out) throws Exception {
 
         // Get an existing state
-        ExistingState states = getExistingState(value);
+        ExistingState states = null;
+        try {
+            states = getExistingState(value);
+        } catch (DuplicateEventException e) {
+            return; // If this is a duplicate event then ignore
+        }
 
         // Make a new session - we will mark agenda-group to run selected rules
         ResultMap resultMap = new ResultMap();
@@ -125,6 +151,15 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
         ResultMap result = new ResultMap();
         ruleEngineProvider.getDroolsHelper().execute("initial-event-trigger-get-state-to-fetch", result, value, configuration);
 
+        // Ignore duplicate events
+        if (result.containsKey("idempotency-key") && result.get("idempotency-key") instanceof String) {
+            if (idempotenceState.contains(result.getString("idempotency-key"))) {
+                throw new DuplicateEventException("Duplicate event - ignore this event");
+            } else {
+                idempotenceState.put(result.getString("idempotency-key"), "");
+            }
+        }
+
         List<KeyPair> stateKeysToFetch = result.getList("states-to-provide", KeyPair.class);
         if (stateKeysToFetch == null) {
             log.warn("states-to-provide is missing from rule engine output (check your logic of 'initial-event-trigger-get-state-to-fetch' section in rule file)");
@@ -159,5 +194,12 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
         }
 
         return states;
+    }
+
+    // Duplicate event
+    public static final class DuplicateEventException extends RuntimeException implements Serializable {
+        public DuplicateEventException(String error) {
+            super(error);
+        }
     }
 }

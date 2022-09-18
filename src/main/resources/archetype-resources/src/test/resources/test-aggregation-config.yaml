@@ -17,6 +17,8 @@ rule_engine:
 ttl:
   main-processor-state-ttl:
     ttl: 100
+  main-processor-state-idempotency-ttl:
+    ttl: 100
 
 state_store:
   type: dynamo

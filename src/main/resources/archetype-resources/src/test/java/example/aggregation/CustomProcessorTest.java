@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static ${package}.example.aggregation.DroolTest.primaryKeyPrefix;
 import static ${package}.example.aggregation.DroolTest.secondaryKeyPrefix;
@@ -50,10 +51,11 @@ public class CustomProcessorTest {
         );
         processFunction.setGenericStateStore(store);
 
-
+        String idempotency = UUID.randomUUID().toString();
         StringObjectMap appleOrder = StringObjectMap.of(
                 "is_test", true,
                 "user_id", "1234",
+                "idempotency", idempotency,
                 "timestamp", timeToUse.getMillis(),
                 "data", StringObjectMap.of(
                         "order_status", "COMPLETED",
@@ -71,6 +73,12 @@ public class CustomProcessorTest {
         );
 
         harness.processElement(appleOrder, timeToUse.getMillis());
+
+        // Send duplicate events - should not process
+        harness.processElement(appleOrder, timeToUse.getMillis());
+        harness.processElement(appleOrder, timeToUse.getMillis());
+        harness.processElement(appleOrder, timeToUse.getMillis());
+
 
         // Event 2 - with phone=samsung
         StringObjectMap samsungOrder = StringObjectMap.of(

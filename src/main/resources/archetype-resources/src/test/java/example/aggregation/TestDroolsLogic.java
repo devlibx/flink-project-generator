@@ -62,7 +62,7 @@ public class TestDroolsLogic {
         }
 
         if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
-            System.out.println(JsonUtils.asJson(resultMap));
+            System.out.println("Drools Filter Result = " + JsonUtils.asJson(resultMap));
         }
     }
 
@@ -86,8 +86,11 @@ public class TestDroolsLogic {
         String secondaryId = secondaryKeyPrefix + event.get("data", "category", String.class);
         resultMap.put("states-to-provide", Arrays.asList(new KeyPair(primaryId, secondaryKeyPrefix + "na"), new KeyPair(primaryId, secondaryId)));
 
+        // Provide idempotency id to ignore duplicates
+        resultMap.put("idempotency-key", event.getString("idempotency", null));
+
         if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
-            System.out.println(JsonUtils.asJson(resultMap));
+            System.out.println("Drools Fetch Key Result = " + JsonUtils.asJson(resultMap));
         }
     }
 
@@ -181,7 +184,7 @@ public class TestDroolsLogic {
         resultMap.put("forward-objects", forwardObjects);
 
         if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
-            System.out.println("Result Map:" + JsonUtils.asJson(resultMap));
+            System.out.println("Drools Final Result = " + JsonUtils.asJson(resultMap));
         }
     }
 }

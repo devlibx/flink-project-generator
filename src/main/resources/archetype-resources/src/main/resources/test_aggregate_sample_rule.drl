@@ -64,6 +64,8 @@ rule "Fetch State Keys"
     String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
     String secondaryId = secondaryKeyPrefix + event.get("data", "category", String.class);
     resultMap.put("states-to-provide", Arrays.asList(new KeyPair(primaryId, secondaryKeyPrefix + "na"), new KeyPair(primaryId, secondaryId)));
+    // Provide idempotency id to ignore duplicates
+    resultMap.put("idempotency-key", event.getString("idempotency", null));
     if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
         System.out.println(JsonUtils.asJson(resultMap));
     }

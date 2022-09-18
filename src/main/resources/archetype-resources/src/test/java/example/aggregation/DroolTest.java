@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class DroolTest {
     private TestDroolsLogic droolsLogic;
@@ -47,6 +48,7 @@ public class DroolTest {
         StringObjectMap appleOrder = StringObjectMap.of(
                 "user_id", "1234",
                 "timestamp", now,
+                "idempotency", UUID.randomUUID().toString(),
                 "data", StringObjectMap.of(
                         "order_status", "COMPLETED",
                         "order_id", "order_1",
@@ -63,6 +65,7 @@ public class DroolTest {
         appleOrder = StringObjectMap.of(
                 "user_id", "1234",
                 "timestamp", now,
+                "idempotency", UUID.randomUUID().toString(),
                 "data", StringObjectMap.of(
                         "order_status", "NOT_COMPLETED",
                         "order_id", "order_1",
@@ -80,6 +83,7 @@ public class DroolTest {
         StringObjectMap appleOrder = StringObjectMap.of(
                 "user_id", "1234",
                 "timestamp", now,
+                "idempotency", UUID.randomUUID().toString(),
                 "data", StringObjectMap.of(
                         "order_status", "COMPLETED",
                         "order_id", "order_1",
@@ -103,6 +107,7 @@ public class DroolTest {
         StringObjectMap appleOrder = StringObjectMap.of(
                 "is_test", true,
                 "user_id", "1234",
+                "idempotency", UUID.randomUUID().toString(),
                 "timestamp", now.getMillis(),
                 "data", StringObjectMap.of(
                         "order_status", "COMPLETED",
@@ -131,6 +136,7 @@ public class DroolTest {
         StringObjectMap samsungOrder = StringObjectMap.of(
                 "is_test", true,
                 "user_id", "1234",
+                "idempotency", UUID.randomUUID().toString(),
                 "timestamp", now.getMillis(),
                 "data", StringObjectMap.of(
                         "order_status", "COMPLETED",
