@@ -39,7 +39,7 @@ then
         resultMap.put("skip", true);
     }
     if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
-        System.out.println(JsonUtils.asJson(resultMap));
+        System.out.println("Drools Filter Result = " + JsonUtils.asJson(resultMap));
     }
 }
 end
@@ -67,7 +67,7 @@ rule "Fetch State Keys"
     // Provide idempotency id to ignore duplicates
     resultMap.put("idempotency-key", event.getString("idempotency", null));
     if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
-        System.out.println(JsonUtils.asJson(resultMap));
+        System.out.println("Drools Fetch Key Result = " + JsonUtils.asJson(resultMap));
     }
 }
 end
@@ -136,7 +136,7 @@ rule "Order Initiated"
     resultMap.put("retain-objects", retainObjects);
     resultMap.put("forward-objects", forwardObjects);
     if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
-        System.out.println("Result Map:" + JsonUtils.asJson(resultMap));
+        System.out.println("Drools Final Result = " + JsonUtils.asJson(resultMap));
     }
 }
 end

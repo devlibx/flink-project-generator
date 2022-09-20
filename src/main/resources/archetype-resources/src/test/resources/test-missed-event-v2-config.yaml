@@ -1,0 +1,34 @@
+environment:
+  stateBackend: rocksdb
+
+sources:
+  mainInput:
+    broker: localhost:9092
+    topic: orders_in
+    group_id: 1234a
+    name: main_input
+    unique_id: 1234-uid
+
+rule_engine:
+  rules:
+    main:
+      url: pwd://src/main/resources/test_missedevent_v2_rule.drl
+
+ttl:
+  main-processor-state-ttl:
+    ttl: 100
+  main-processor-state-idempotency-ttl:
+    ttl: 100
+
+kafka_sinks:
+  mainOutput:
+    broker: localhost:9092
+    topic: orders_out
+    name: main_output
+    unique_id: 1234-uidsomeout
+
+
+miscellaneous_properties:
+  console-debug-sink-enabled: true
+  debug-drools-print-result-filter-input-stream: false
+  debug-drools-print-result-initial-event-trigger: true

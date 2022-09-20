@@ -30,7 +30,7 @@ public class CustomProcessorTest {
     private final DateTime timeToUse = CalendarUtils.createTime(CalendarUtils.DATETIME_FORMAT_V1, "2022-07-05T17:26:35.302+05:30");
 
     @Test
-    public void testHeimdallProcessFunction() throws Exception {
+    public void testProcessFunction() throws Exception {
         IRuleEngineProvider ruleEngineProvider = new IRuleEngineProvider.ProxyDroolsHelper(
                 "jar:///test_aggregate_sample_rule.drl"
         );
