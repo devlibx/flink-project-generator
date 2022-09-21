@@ -89,6 +89,8 @@ rule "Did not get completed event"
   final String primaryIdKey = "user_id";
 {
     resultMap.put("expiry-event-trigger-execute-default", true);
+    // NOTE - If you pass this a "false" then you must also implement "onExpiryGetPartitionKey" to give
+    // proper key
 }
 end
 
@@ -107,6 +109,8 @@ rule "Get the partition key for output sink"
 {
     final String debugKey = "debug-drools-print-result-expiry-event-trigger-partition-key";
     final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
+    // NOTE - this is OK if expiry-event-trigger-execute-default=true. If it is set to false then you must
+    // generate the partition-key from input "objectToBeEmitted"
     resultMap.put("partition-key", objectToBeEmitted.getString("key") + "#" + objectToBeEmitted.get("sub_key"));
     if (miscellaneousProperties.containsKey(debugKey) && miscellaneousProperties.get(debugKey, Boolean.class)) {
         System.out.println("Drools Kafka Sink Partition Key Result = " + JsonUtils.asJson(resultMap));
