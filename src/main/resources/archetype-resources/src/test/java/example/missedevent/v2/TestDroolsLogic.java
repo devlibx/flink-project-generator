@@ -22,6 +22,7 @@ public class TestDroolsLogic {
     public transient Configuration configuration;
 
     public static final String primaryIdKey = "user_id";
+    public static final String secondaryIdKey = "data.order_status";
 
     /**
      * <pre>
@@ -40,8 +41,8 @@ public class TestDroolsLogic {
         final String debugKey = "debug-drools-print-result-filter-input-stream";
         final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
 
-        String status = event.get("data", "order_status", String.class);
-        String primaryId = event.get(primaryIdKey, String.class);
+        String status = event.path(secondaryIdKey, String.class);
+        String primaryId = event.path(primaryIdKey, String.class);
         if (validStatusList.contains(status)) {
             resultMap.put("skip", false);
             resultMap.put("group-key", primaryId);
@@ -73,7 +74,7 @@ public class TestDroolsLogic {
 
         resultMap.put("idempotency-key", event.get("idempotency"));
 
-        if (Objects.equals(event.get("data", "order_status", String.class), "INIT")) {
+        if (Objects.equals(event.path(secondaryIdKey, String.class), "INIT")) {
 
             // Wait for 10 sec after alert tha completed event did not come
             resultMap.put("time-to-wait-for-other-event-in-sec", 5);
@@ -99,7 +100,7 @@ public class TestDroolsLogic {
             // Make sure we retain data
             resultMap.put("retain-state", true);
 
-        } else if (Objects.equals(event.get("data", "order_status", String.class), "COMPLETED")) {
+        } else if (Objects.equals(event.path(secondaryIdKey, String.class), "COMPLETED")) {
 
             // Got completed event, delete the state
             resultMap.put("retain-state", false);

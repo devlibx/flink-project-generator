@@ -21,12 +21,13 @@ configuration: Configuration()
 then
 
   final String primaryIdKey = "user_id";
+  final String secondaryIdKey = "data.order_status";
 {
     final List<String> validStatusList = Arrays.asList("COMPLETED", "INIT");
     final String debugKey = "debug-drools-print-result-filter-input-stream";
     final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
-    String status = event.get("data", "order_status", String.class);
-    String primaryId = event.get(primaryIdKey, String.class);
+    String status = event.path(secondaryIdKey, String.class);
+    String primaryId = event.path(primaryIdKey, String.class);
     if (validStatusList.contains(status)) {
         resultMap.put("skip", false);
         resultMap.put("group-key", primaryId);
@@ -51,12 +52,13 @@ rule "Order Initiated"
   then
 
   final String primaryIdKey = "user_id";
+  final String secondaryIdKey = "data.order_status";
 {
     // Constants - change this for your use case
     final String debugKey = "debug-drools-print-result-initial-event-trigger";
     final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
     resultMap.put("idempotency-key", event.get("idempotency"));
-    if (Objects.equals(event.get("data", "order_status", String.class), "INIT")) {
+    if (Objects.equals(event.path(secondaryIdKey, String.class), "INIT")) {
         // Wait for 10 sec after alert tha completed event did not come
         resultMap.put("time-to-wait-for-other-event-in-sec", 5);
         // When we did not get the event on time then we will forward this as alert
@@ -65,7 +67,7 @@ rule "Order Initiated"
         resultMap.put("retain-objects", retainObjects);
         // Make sure we retain data
         resultMap.put("retain-state", true);
-    } else if (Objects.equals(event.get("data", "order_status", String.class), "COMPLETED")) {
+    } else if (Objects.equals(event.path(secondaryIdKey, String.class), "COMPLETED")) {
         // Got completed event, delete the state
         resultMap.put("retain-state", false);
         resultMap.put("delete-retained-state", true);
@@ -87,6 +89,7 @@ rule "Did not get completed event"
   then
 
   final String primaryIdKey = "user_id";
+  final String secondaryIdKey = "data.order_status";
 {
     resultMap.put("expiry-event-trigger-execute-default", true);
     // NOTE - If you pass this a "false" then you must also implement "onExpiryGetPartitionKey" to give
@@ -106,6 +109,7 @@ rule "Get the partition key for output sink"
   then
 
   final String primaryIdKey = "user_id";
+  final String secondaryIdKey = "data.order_status";
 {
     final String debugKey = "debug-drools-print-result-expiry-event-trigger-partition-key";
     final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();

@@ -34,6 +34,9 @@ public class TestDroolsLogic {
     public static final String primaryKeyPrefix = "user_case_1_pk${symbol_pound}";
     public static final String secondaryKeyPrefix = "user_case_1_sk${symbol_pound}";
     public static final String primaryIdKey = "user_id";
+    public static final String orderStatusIdKey = "data.order_status";
+    public static final String categoryIdKey = "data.category";
+    public static final String merchantIdKey = "data.merchant_id";
 
     /**
      * <pre>
@@ -52,8 +55,8 @@ public class TestDroolsLogic {
         final String debugKey = "debug-drools-print-result-filter-input-stream";
         final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
 
-        String status = event.get("data", "order_status", String.class);
-        String primaryId = event.get(primaryIdKey, String.class);
+        String status = event.path(orderStatusIdKey, String.class);
+        String primaryId = event.path(primaryIdKey, String.class);
         if (validStatusList.contains(status)) {
             resultMap.put("skip", false);
             resultMap.put("group-key", primaryId);
@@ -82,8 +85,8 @@ public class TestDroolsLogic {
         final String debugKey = "debug-drools-print-result-state-keys-func";
         final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
 
-        String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
-        String secondaryId = secondaryKeyPrefix + event.get("data", "category", String.class);
+        String primaryId = primaryKeyPrefix + event.path(primaryIdKey, String.class);
+        String secondaryId = secondaryKeyPrefix + event.path(categoryIdKey, String.class);
         resultMap.put("states-to-provide", Arrays.asList(new KeyPair(primaryId, secondaryKeyPrefix + "na"), new KeyPair(primaryId, secondaryId)));
 
         // Provide idempotency id to ignore duplicates
@@ -128,7 +131,7 @@ public class TestDroolsLogic {
         // System.out.println("ExistingState=" + JsonUtils.asJson(existingState));
 
         final String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
-        final String secondaryKey = secondaryKeyPrefix + event.get("data", "category", String.class);
+        final String secondaryKey = secondaryKeyPrefix + event.path(categoryIdKey, String.class);
         final KeyPair primaryIdKeyPair = new KeyPair(primaryId, secondaryKeyPrefix + "na");
         final KeyPair primaryAndSecondaryIdKeyPair = new KeyPair(primaryId, secondaryKey);
 
@@ -158,7 +161,7 @@ public class TestDroolsLogic {
                         .dayAggregationWindow(7)
                         .build()
         );
-        updater = new CustomAggregationUpdater.StringAppender(event.get("data", "merchant_id", String.class));
+        updater = new CustomAggregationUpdater.StringAppender(event.path(merchantIdKey, String.class));
         aggregationOfMerchantsUserHelper.process(aggregationOfMerchantsUserUsed, now, event, eventTime, updater);
         // System.out.println("aggregationOfMerchantsUserUsed:" + JsonUtils.asJson(aggregationOfMerchantsUserUsed));
 

@@ -26,12 +26,15 @@ then
   final String primaryKeyPrefix = "user_case_1_pk#";
   final String secondaryKeyPrefix = "user_case_1_sk#";
   final String primaryIdKey = "user_id";
+  final String orderStatusIdKey = "data.order_status";
+  final String categoryIdKey = "data.category";
+  final String merchantIdKey = "data.merchant_id";
 {
     final List<String> validStatusList = Arrays.asList("COMPLETED", "INIT");
     final String debugKey = "debug-drools-print-result-filter-input-stream";
     final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
-    String status = event.get("data", "order_status", String.class);
-    String primaryId = event.get(primaryIdKey, String.class);
+    String status = event.path(orderStatusIdKey, String.class);
+    String primaryId = event.path(primaryIdKey, String.class);
     if (validStatusList.contains(status)) {
         resultMap.put("skip", false);
         resultMap.put("group-key", primaryId);
@@ -58,11 +61,14 @@ rule "Fetch State Keys"
   final String primaryKeyPrefix = "user_case_1_pk#";
   final String secondaryKeyPrefix = "user_case_1_sk#";
   final String primaryIdKey = "user_id";
+  final String orderStatusIdKey = "data.order_status";
+  final String categoryIdKey = "data.category";
+  final String merchantIdKey = "data.merchant_id";
 {
     final String debugKey = "debug-drools-print-result-state-keys-func";
     final StringObjectMap miscellaneousProperties = configuration.getMiscellaneousProperties();
-    String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
-    String secondaryId = secondaryKeyPrefix + event.get("data", "category", String.class);
+    String primaryId = primaryKeyPrefix + event.path(primaryIdKey, String.class);
+    String secondaryId = secondaryKeyPrefix + event.path(categoryIdKey, String.class);
     resultMap.put("states-to-provide", Arrays.asList(new KeyPair(primaryId, secondaryKeyPrefix + "na"), new KeyPair(primaryId, secondaryId)));
     // Provide idempotency id to ignore duplicates
     resultMap.put("idempotency-key", event.getString("idempotency", null));
@@ -87,6 +93,9 @@ rule "Order Initiated"
   final String primaryKeyPrefix = "user_case_1_pk#";
   final String secondaryKeyPrefix = "user_case_1_sk#";
   final String primaryIdKey = "user_id";
+  final String orderStatusIdKey = "data.order_status";
+  final String categoryIdKey = "data.category";
+  final String merchantIdKey = "data.merchant_id";
 {
     // Constants - change this for your use case
     final String debugKey = "debug-drools-print-result-initial-event-trigger";
@@ -104,7 +113,7 @@ rule "Order Initiated"
     // System.out.println("Event=" + JsonUtils.asJson(event));
     // System.out.println("ExistingState=" + JsonUtils.asJson(existingState));
     final String primaryId = primaryKeyPrefix + event.get(primaryIdKey, String.class);
-    final String secondaryKey = secondaryKeyPrefix + event.get("data", "category", String.class);
+    final String secondaryKey = secondaryKeyPrefix + event.path(categoryIdKey, String.class);
     final KeyPair primaryIdKeyPair = new KeyPair(primaryId, secondaryKeyPrefix + "na");
     final KeyPair primaryAndSecondaryIdKeyPair = new KeyPair(primaryId, secondaryKey);
     // ************************ Aggregation 1 - Count orders done by user ******************************************
@@ -122,7 +131,7 @@ rule "Order Initiated"
         System.out.println("****** Error - aggregation with " + primaryIdKeyPair + " is null ****** Error - aggregation with ");
     }
     TimeWindowDataAggregationHelper<StringObjectMap> aggregationOfMerchantsUserHelper = new TimeWindowDataAggregationHelper<>(TimeWindowDataAggregationHelper.Config.builder().dayAggregationWindow(7).build());
-    updater = new CustomAggregationUpdater.StringAppender(event.get("data", "merchant_id", String.class));
+    updater = new CustomAggregationUpdater.StringAppender(event.path(merchantIdKey, String.class));
     aggregationOfMerchantsUserHelper.process(aggregationOfMerchantsUserUsed, now, event, eventTime, updater);
     // System.out.println("aggregationOfMerchantsUserUsed:" + JsonUtils.asJson(aggregationOfMerchantsUserUsed));
     // What to retain in state
