@@ -16,6 +16,7 @@ import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 
 import java.util.Date;
+import java.util.Objects;
 
 import static ${package}.example.delay.trigger.Main.ID_PARAM_NAME;
 
@@ -76,9 +77,17 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
         String idempotencyId = value.getString(ID_PARAM_NAME, "");
         if (Strings.isNullOrEmpty(idempotencyId) || idempotenceState.contains(idempotencyId)) {
             return;
+        } else {
+            idempotenceState.put(idempotencyId, "");
         }
 
-        System.out.println(JsonUtils.asJson(value));
+        // See if this is a deleted state then remove the state - we will no longer send this data in retry
+        String requestType = value.getString("request_type", "");
+        if (Objects.equals(requestType, "delete")) {
+            dataState.remove(idempotencyId);
+            idempotenceState.remove(idempotencyId);
+            return;
+        }
 
         // Store this to state - we will send this when time expire
         dataState.put(idempotencyId, StringObjectMap.of(
