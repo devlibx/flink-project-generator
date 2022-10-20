@@ -1,0 +1,29 @@
+environment:
+  stateBackend: rocksdb
+
+sources:
+  mainInput:
+    broker: b-1.metric-store-new-stg.x1ghkm.c2.kafka.ap-south-1.amazonaws.com:9092
+    topic: orders_in
+    group_id: 1234a1
+    name: main_input
+    unique_id: 1234-uid
+
+kafka_sinks:
+  mainOutput:
+    broker: b-1.metric-store-new-stg.x1ghkm.c2.kafka.ap-south-1.amazonaws.com:9092
+    topic: orders_out
+    name: main_out
+    unique_id: 1234-out-uid
+
+
+ttl:
+  main-processor-state-ttl:
+    ttl: 100
+  main-processor-state-idempotency-ttl:
+    ttl: 100
+
+miscellaneous_properties:
+  console-debug-sink-enabled: true
+  delay-trigger-debug-register-timer: true
+  delay-trigger-debug-on-timer: true
