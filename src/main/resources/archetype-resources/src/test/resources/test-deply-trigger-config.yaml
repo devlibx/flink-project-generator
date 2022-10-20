@@ -3,7 +3,7 @@ environment:
 
 sources:
   mainInput:
-    broker: b-1.metric-store-new-stg.x1ghkm.c2.kafka.ap-south-1.amazonaws.com:9092
+    broker: localhost:9092
     topic: orders_in
     group_id: 1234a1
     name: main_input
@@ -11,7 +11,7 @@ sources:
 
 kafka_sinks:
   mainOutput:
-    broker: b-1.metric-store-new-stg.x1ghkm.c2.kafka.ap-south-1.amazonaws.com:9092
+    broker: localhost:9092
     topic: orders_out
     name: main_out
     unique_id: 1234-out-uid
