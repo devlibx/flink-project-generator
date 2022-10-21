@@ -14,11 +14,10 @@ import org.apache.flink.api.common.state.StateTtlConfig;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
+import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.Objects;
-
-import static ${package}.example.delay.trigger.Main.ID_PARAM_NAME;
 
 @Slf4j
 public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMap, StringObjectMap> {
@@ -74,8 +73,10 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
     @Override
     public void processElement(StringObjectMap value, KeyedProcessFunction<String, StringObjectMap, StringObjectMap>.Context ctx, Collector<StringObjectMap> out) throws Exception {
 
-        String idempotencyId = value.getString(ID_PARAM_NAME, "");
+        // If idempotency id is missing then do not do anything
+        String idempotencyId = value.getString(Main.ID_PARAM_NAME, "");
         if (Strings.isNullOrEmpty(idempotencyId) || idempotenceState.contains(idempotencyId)) {
+            log.info("delay-queue: duplicate event ignore: id={}", idempotencyId);
             return;
         } else {
             idempotenceState.put(idempotencyId, "");
@@ -90,10 +91,14 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
         }
 
         // Store this to state - we will send this when time expire
-        dataState.put(idempotencyId, StringObjectMap.of(
+        StringObjectMap stateData = StringObjectMap.of(
                 "payload", value.getStringObjectMap("payload"),
                 "idempotency_id", idempotencyId
-        ));
+        );
+        if (value.containsKey("ignore_after") && value.get("ignore_after") instanceof Number) {
+            stateData.put("ignore_after", value.get("ignore_after"));
+        }
+        dataState.put(idempotencyId, stateData);
 
         // Setup retry timers
         long delayInMs = value.getInt("delay_sec", 60) * 1000;
@@ -104,7 +109,7 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
             ctx.timerService().registerProcessingTimeTimer(timer);
 
             if (debugPrintRegisterTime) {
-                System.out.println("timer registered: id=" + idempotencyId + " time=" + new Date(timer));
+                log.info("delay-queue: timer registered: id={}, time={}", idempotencyId, new Date(timer));
             }
         }
     }
@@ -113,9 +118,21 @@ public class CustomProcessor extends KeyedProcessFunction<String, StringObjectMa
     public void onTimer(long timestamp, KeyedProcessFunction<String, StringObjectMap, StringObjectMap>.OnTimerContext ctx, Collector<StringObjectMap> out) throws Exception {
         StringObjectMap toSend = dataState.get(ctx.getCurrentKey());
         if (toSend != null) {
+
+            Number ignoreAfter = toSend.get("ignore_after", Number.class);
+            if (ignoreAfter != null && ignoreAfter.longValue() > 0) {
+                DateTime ignoreAfterTime = new DateTime(new Date(ignoreAfter.longValue()));
+                if (DateTime.now().isAfter(ignoreAfterTime)) {
+                    if (debugPrintOnTimer) {
+                        log.info("delay-queue: on timer called: ignore it is expired : id={} data={}, expiryTime={}", ctx.getCurrentKey(), JsonUtils.asJson(toSend), ignoreAfterTime);
+                    }
+                    return;
+                }
+            }
+
             out.collect(toSend);
             if (debugPrintOnTimer) {
-                System.out.println("on timer called: id=" + ctx.getCurrentKey() + " data=" + JsonUtils.asJson(toSend));
+                log.info("delay-queue: on timer called: id={} data={}", ctx.getCurrentKey(), JsonUtils.asJson(toSend));
             }
         }
     }
