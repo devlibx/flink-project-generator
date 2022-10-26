@@ -143,6 +143,10 @@ public class HttpSinkProcessor extends KeyedProcessFunction<String, StringObject
                 if (debugPrintOnTimer) log.info("OnTimer called for retry: data={}", toSend);
                 httpSinkOperator.processEvent(toSend.getStringObjectMap("payload"), true);
                 if (debugPrintOnTimer) log.info("[Success] OnTimer called for retry: data={}", toSend);
+
+                // Delete this data - to avoid unnecessary retries
+                dataState.remove(ctx.getCurrentKey());
+
             } catch (Exception e) {
                 log.error("Failed to make HTTP call in retry: data={}", toSend);
             }
