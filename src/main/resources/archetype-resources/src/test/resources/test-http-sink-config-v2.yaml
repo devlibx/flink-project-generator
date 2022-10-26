@@ -1,0 +1,39 @@
+environment:
+  stateBackend: rocksdb
+
+sources:
+  mainInput:
+    broker:  b-1.stagedatakafka.wpioyb.c2.kafka.ap-south-1.amazonaws.com:9092
+    topic: harish_in_1
+    group_id: 1234a
+    name: main_input
+    unique_id: 1234-uid
+
+ttl:
+  main-processor-state-ttl:
+    ttl: 100
+  main-processor-state-idempotency-ttl:
+    ttl: 100
+
+miscellaneous_properties:
+  console-debug-sink-enabled: true
+  delay-trigger-debug-on-timer: true
+  debug-print-on-received-event: true
+  delay-sec: 5
+  retry-count: 3
+  key-path: data.post_id
+
+http_config:
+  servers:
+    jsonplaceholder:
+      host: jsonplaceholder.typicode.com
+      port: 443
+      https: true
+      connectTimeout: 1000
+      connectionRequestTimeout: 1000
+  apis:
+    getPosts:
+      method: GET
+      path: /posts/${id}
+      server: jsonplaceholder
+      timeout: 1000
