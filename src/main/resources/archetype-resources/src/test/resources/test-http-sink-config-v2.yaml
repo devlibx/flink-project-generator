@@ -3,7 +3,7 @@ environment:
 
 sources:
   mainInput:
-    broker:  b-1.stagedatakafka.wpioyb.c2.kafka.ap-south-1.amazonaws.com:9092
+    broker:  localhost:9092
     topic: harish_in_1
     group_id: 1234a
     name: main_input
@@ -36,4 +36,4 @@ http_config:
       method: GET
       path: /posts/${id}
       server: jsonplaceholder
-      timeout: 1000
+      timeout: 10000

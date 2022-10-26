@@ -9,11 +9,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import io.gitbub.devlibx.easy.helper.ApplicationContext;
-import io.gitbub.devlibx.easy.helper.json.JsonUtils;
 import io.gitbub.devlibx.easy.helper.map.StringObjectMap;
 import io.gitbub.devlibx.easy.helper.metrics.IMetrics;
 import io.github.devlibx.easy.http.module.EasyHttpModule;
-import io.github.devlibx.easy.http.util.Call;
 import io.github.devlibx.easy.http.util.EasyHttp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.flink.api.common.state.MapState;
@@ -35,15 +33,15 @@ public class HttpSinkProcessor extends KeyedProcessFunction<String, StringObject
     private transient MapState<String, String> idempotenceState;
     private final int delaySec;
     private final int retryCount;
-    private final String path;
+    private final HttpSinkOperator httpSinkOperator;
 
     public HttpSinkProcessor(io.github.devlibx.easy.flink.utils.v2.config.Configuration configuration) {
         this.configuration = configuration;
-        debugPrintOnReceivedEvent = configuration.getMiscellaneousProperties().getBoolean("  debug-print-on-received-event", false);
+        debugPrintOnReceivedEvent = configuration.getMiscellaneousProperties().getBoolean("debug-print-on-received-event", false);
         debugPrintOnTimer = configuration.getMiscellaneousProperties().getBoolean("delay-trigger-debug-on-timer", false);
         delaySec = configuration.getMiscellaneousProperties().getInt("delay-sec", 30);
         retryCount = configuration.getMiscellaneousProperties().getInt("retry-count", 1);
-        path = configuration.getMiscellaneousProperties().getString("key-path", "TODO-Key-Path");
+        httpSinkOperator = new HttpSinkOperator(configuration);
     }
 
     @Override
@@ -109,10 +107,10 @@ public class HttpSinkProcessor extends KeyedProcessFunction<String, StringObject
         // Make the API call and set retry if it failed
         try {
             if (debugPrintOnReceivedEvent) log.info("Event received make http call: data={}", value);
-            processHttpCall(value);
+            httpSinkOperator.processEvent(value, false);
             if (debugPrintOnReceivedEvent) log.info("Event received make http call: data={}", value);
         } catch (Exception e) {
-            log.error("Failed to make HTTP call, setting for retry: data={}", value);
+            if (debugPrintOnReceivedEvent) log.info("Failed to make HTTP call, setting for retry: data={}", value);
             processElementForRetry(value, idempotencyId, ctx);
         }
     }
@@ -143,20 +141,11 @@ public class HttpSinkProcessor extends KeyedProcessFunction<String, StringObject
         if (toSend != null) {
             try {
                 if (debugPrintOnTimer) log.info("OnTimer called for retry: data={}", toSend);
-                processHttpCall(toSend);
+                httpSinkOperator.processEvent(toSend.getStringObjectMap("payload"), true);
                 if (debugPrintOnTimer) log.info("[Success] OnTimer called for retry: data={}", toSend);
             } catch (Exception e) {
                 log.error("Failed to make HTTP call in retry: data={}", toSend);
             }
         }
-    }
-
-    private void processHttpCall(StringObjectMap value) {
-        String postId = value.path(path, String.class);
-        StringObjectMap result = EasyHttp.callSync(Call.builder(StringObjectMap.class)
-                .withServerAndApi("jsonplaceholder", "getPosts")
-                .addPathParam("id", postId)
-                .build());
-        System.out.println(JsonUtils.asJson(result));
     }
 }
